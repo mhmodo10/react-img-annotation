@@ -1,1 +1,3 @@
-export {AnnotationsCanvas} from './Components/Canvas'
+import AnnotationCanvas from './Components/Canvas'
+
+export {AnnotationCanvas}
