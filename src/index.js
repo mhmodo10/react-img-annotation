@@ -1,1 +1,1 @@
-export * from '../example/src/Components/Canvas'
+export {AnnotationsCanvas} from './Components/Canvas'
