@@ -1,5 +1,5 @@
 import React from 'react'
-import AnnotationCanvas from './Components/Canvas'
+import AnnotationCanvas from '../src/Components/Canvas'
 import {useState} from 'react'
 import 'react-img-annotation/dist/index.css'
 
