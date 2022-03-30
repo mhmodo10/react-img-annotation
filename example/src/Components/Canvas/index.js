@@ -7,7 +7,7 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     const [canvas,setCanvas] = useState()
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
-    const [annotations, setAnnotations] = useState([])
+    const [annotations, setAnnotations] = useState([-1])
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
     const [changedAnnotation, setChangedAnnotation] = useState(null)
     var altClicked = false
@@ -108,7 +108,7 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     },[changedAnnotation,annotations])
 
     useEffect(() =>{
-        if(OnAnnotationsChange && annotations){
+        if(OnAnnotationsChange && annotations[0] !== -1){
             OnAnnotationsChange(annotations)
         }
     },[annotations])
