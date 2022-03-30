@@ -128,7 +128,7 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     useEffect(() =>{
         if(annotationsData && annotations.length === 0 && canvas){
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,i,canvas)
+                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas)
             ;}))
             setAnnotations(annotationsData)
         }
