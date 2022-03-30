@@ -1,5 +1,5 @@
 import React from 'react'
-import AnnotationCanvas from '../src/Components/Canvas'
+import AnnotationCanvas from './Components/Canvas'
 import {useState} from 'react'
 import 'react-img-annotation/dist/index.css'
 
@@ -19,6 +19,7 @@ const App = () => {
       w : 100,
       h : 100,
       key : 0,
+      label: "box1"
     },
     {
       x : 130,
@@ -26,6 +27,7 @@ const App = () => {
       w : 100,
       h : 100,
       key : 1,
+      label: "box2"
     },
     {
       x : 0,
@@ -33,6 +35,7 @@ const App = () => {
       w : 100,
       h : 100,
       key : 2,
+      label: "box3"
     }
   ]
   return (
