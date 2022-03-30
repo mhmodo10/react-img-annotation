@@ -41,6 +41,7 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
 
     const OnDoubleClick = (e) =>{
         let rect = new Rectangle(e.pointer.x,e.pointer.y,100,100,"no label",annotationsData.length,canvas)
+        setCanvasAnnotations(canvasAnnotations => [...canvasAnnotations,rect])
         setAnnotations(annotations => [...annotations,{
             x : e.pointer.x,
             y : e.pointer.y,
@@ -67,10 +68,10 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     }
 
     const OnObjectRemoved = (e) =>{
+        setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.rect.data.key !== e.target.data.key))
         setAnnotations(annotations => annotations.filter(annotation => annotation.key !== e.target.data.key))
-        setChangedAnnotation(null)
     }
-
+    
     const OnObjectSelected = (e) =>{
         if(OnAnnotationSelect){
             let annotation = {
@@ -126,7 +127,7 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     },[canvas])
 
     useEffect(() =>{
-        if(annotationsData && annotations.length === 0 && canvas){
+        if(annotationsData && annotations[0] === -1 && canvas){
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
                 return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas)
             ;}))
@@ -135,12 +136,21 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     },[annotationsData,canvas])
 
     useEffect(() =>{
+        console.log("hereeeeee")
         if(modifiedLabel){
+
             canvasAnnotations.map((canvasAnnotation,i) =>{
                 if(canvasAnnotation.rect.data.key === modifiedLabel.key){
                     canvasAnnotation.rect.data.label = modifiedLabel.label
                 }
             })
+            setAnnotations(
+                annotations.map((annotation,i) =>{
+                    if(annotation.key === modifiedLabel.key){
+                        return {...annotation, label : modifiedLabel.label}
+                    }
+                    return annotation
+            }))
         }
     },[modifiedLabel])
     window.addEventListener('keydown',OnButtonClicked)
