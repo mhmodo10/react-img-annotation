@@ -17,8 +17,8 @@ imageSrc = "string with the url or image path"
 
 //annotationsData is a list of boxes each box has the following structure
 {
-  key : key //unique,
-  label : string.
+  key : key, //unique
+  label : string, //label given to the box
   x : int, //x-coordinates with (0,0) being top left
   y : int, //y-coordinates with (0,0) being top left
   w : int, //box width
@@ -31,8 +31,8 @@ imageSrc = "string with the url or image path"
 
 //modifiedLabel is optional and given when you want to edit a certain label in from outside AnnotationCanvas and has the following structure
 {
-key : key of the edited annotation,
-label: new label
+key : value, //key of the edited annotation
+label: new_label
 }
 
 //isSelectable is a boolean that dictates if interaction with annotations is allowed
