@@ -12,7 +12,7 @@ npm install --save react-img-annotation
 
 ## Usage
 this is how you use the AnnotationsCanvas component
-```
+```jsx
 imageSrc = "string with the url or image path"
 
 annotationsData is a list of boxes each box has the following structure
