@@ -15,29 +15,29 @@ this is how you use the AnnotationsCanvas component
 ```jsx
 imageSrc = "string with the url or image path"
 
-annotationsData is a list of boxes each box has the following structure
+//annotationsData is a list of boxes each box has the following structure
 {
-  key : key #unique,
+  key : key //unique,
   label : string.
-  x : int, #x-coordinates with (0,0) being top left
-  y : int, #y-coordinates with (0,0) being top left
-  w : int, #box width
-  h : int, #box height
+  x : int, //x-coordinates with (0,0) being top left
+  y : int, //y-coordinates with (0,0) being top left
+  w : int, //box width
+  h : int, //box height
 }
-all the boxes in annotationsData get drawn
+//all the boxes in annotationsData get drawn
 
-OnAnnotationsChange is called when there is any change to the boxes on the canvas (i.e change location, scale,rotation)
-and gives the changed annotations as input
+//OnAnnotationsChange is called when there is any change to the boxes on the canvas (i.e change location, scale,rotation)
+//and gives the changed annotations as input
 
-modifiedLabel is optional and given when you want to edit a certain label in from outside AnnotationCanvas and has the following structure
+//modifiedLabel is optional and given when you want to edit a certain label in from outside AnnotationCanvas and has the following structure
 {
 key : key of the edited annotation,
 label: new label
 }
 
-isSelectable is a boolean that dictates if interaction with annotations is allowed
+//isSelectable is a boolean that dictates if interaction with annotations is allowed
 
-OnAnnotationsSelect gets called when an annotation is selected and gives the selected annotation as input
+//OnAnnotationsSelect gets called when an annotation is selected and gives the selected annotation as input
 ```
 ```jsx
 import {AnnotationCanvas} from 'react-img-annotation'
