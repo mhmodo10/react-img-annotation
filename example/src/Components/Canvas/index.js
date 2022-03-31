@@ -3,7 +3,7 @@ import {useEffect,useState} from "react"
 import {fabric} from 'fabric'
 import Rectangle from '../Rect'
 import {Tooltip, PageWrapper } from './StyledCanvas'
-const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect, modifiedLabel}) =>{
+const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect, modifiedLabel, isSelectable}) =>{
     const [canvas,setCanvas] = useState()
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
@@ -40,7 +40,14 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     }
 
     const OnDoubleClick = (e) =>{
-        let rect = new Rectangle(e.pointer.x,e.pointer.y,100,100,"no label",annotationsData.length,canvas)
+        var highest = 0
+        canvas.getObjects().forEach((o, i) =>{
+            if(highest < o.data.key){
+                highest = o.data.key
+            }
+        })
+        let key = highest + 1
+        let rect = new Rectangle(e.pointer.x,e.pointer.y,100,100,"no label",key,canvas, isSelectable ? true : false)
         setCanvasAnnotations(canvasAnnotations => [...canvasAnnotations,rect])
         setAnnotations(annotations => [...annotations,{
             x : e.pointer.x,
@@ -51,10 +58,6 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
             label : rect.rect.data.label
         }])
         canvas.setActiveObject(rect.rect)
-    }
-
-    const OnObjectChanged = (e) =>{
-        setChangedAnnotation(e.target)
     }
 
     const OnMouseOver = (e) =>{
@@ -71,7 +74,11 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.rect.data.key !== e.target.data.key))
         setAnnotations(annotations => annotations.filter(annotation => annotation.key !== e.target.data.key))
     }
-    
+
+    const OnObjectChanged = (e) =>{
+        setChangedAnnotation(e.target)
+    }
+
     const OnObjectSelected = (e) =>{
         if(OnAnnotationSelect){
             let annotation = {
@@ -87,12 +94,31 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     }
 
     useEffect(() =>{
-        setCanvas(new fabric.Canvas('c',{
-            height: h,
-            width: w,
-         }))
+        if(!canvas){
+            let temp_canvas = new fabric.Canvas('c',{
+                height: h,
+                width: w,
+             })
+             temp_canvas.setBackgroundImage(image,temp_canvas.renderAll.bind(temp_canvas))
+            setCanvas(temp_canvas)
+        }
+        else{
+            canvas.setHeight(h)
+            canvas.setWidth(w)
+            canvas.setBackgroundImage(image,canvas.renderAll.bind(canvas))
+        }
     },[image])
-
+    useEffect(() =>{
+        if(canvas){
+            canvasAnnotations.map((ann) =>{
+                canvas.remove(ann.rect)
+            })
+            setCanvasAnnotations(annotationsData.map((annotation,i) =>{
+                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas,isSelectable ? true : false)
+            ;}))
+            setAnnotations(annotationsData)
+        }
+    },[annotationsData])
     useEffect(()=>{
         if(annotations && changedAnnotation){
         setAnnotations(annotations => annotations.map((annotation,i) =>{
@@ -129,14 +155,13 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     useEffect(() =>{
         if(annotationsData && annotations[0] === -1 && canvas){
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas)
+                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas,isSelectable ? true : false)
             ;}))
             setAnnotations(annotationsData)
         }
     },[annotationsData,canvas])
 
     useEffect(() =>{
-        console.log("hereeeeee")
         if(modifiedLabel){
 
             canvasAnnotations.map((canvasAnnotation,i) =>{
