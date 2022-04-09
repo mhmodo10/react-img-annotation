@@ -53,6 +53,15 @@ const App = () => {
       label: "box3"
     }
   ])
+  const style = {
+    fill : "yellow",
+    stroke : "blue",
+    borderColor : "green",
+    cornerColor : "red",
+    cornerSize : 20,
+    transparentCorners : false,
+    strokeWidth : 5,
+  }
   return (
   <>
       <div onClick={() =>{setCurrentImage("http://127.0.0.1:5000/static/srg_kjq__ctfncblkjxxuiwwzijeltdrrxwkznhapozvk-uhna1/16486478488563945.jpg")}}> Another image</div>
@@ -89,7 +98,8 @@ const App = () => {
     OnAnnotationSelect={OnAnnotationSelected}
     OnAnnotationsChange={OnAnnotationsChanged}
     modifiedLabel={modifiedLabel}
-    isSelectable={true}></AnnotationCanvas>
+    isSelectable={true}
+    shapeStyle={style}></AnnotationCanvas>
     {
       boxes.map((box,i) =>{
         return <input key={box.key} id={box.key} value={box.label} onChange={OnInputChange}></input>

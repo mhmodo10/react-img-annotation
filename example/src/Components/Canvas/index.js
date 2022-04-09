@@ -3,7 +3,7 @@ import {useEffect,useState} from "react"
 import {fabric} from 'fabric'
 import Rectangle from '../Rect'
 import {Tooltip, PageWrapper } from './StyledCanvas'
-const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect, modifiedLabel, isSelectable}) =>{
+const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect, modifiedLabel, isSelectable, shapeStyle}) =>{
     const [canvas,setCanvas] = useState()
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
@@ -47,7 +47,8 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
             }
         })
         let key = highest + 1
-        let rect = new Rectangle(e.pointer.x,e.pointer.y,100,100,"no label",key,canvas, isSelectable ? true : false)
+        let rect = new Rectangle(e.pointer.x,e.pointer.y,100,100,
+            `box ${key}`,key,canvas, isSelectable ? true : false,shapeStyle)
         setCanvasAnnotations(canvasAnnotations => [...canvasAnnotations,rect])
         setAnnotations(annotations => [...annotations,{
             x : e.pointer.x,
@@ -114,7 +115,8 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
                 canvas.remove(ann.rect)
             })
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas,isSelectable ? true : false)
+                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,
+                                    annotation.label,annotation.key,canvas,isSelectable ? true : false,shapeStyle)
             ;}))
             setAnnotations(annotationsData)
         }
@@ -155,7 +157,8 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
     useEffect(() =>{
         if(annotationsData && annotations[0] === -1 && canvas){
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                return new Rectangle(annotation.x,annotation.y,annotation.w,annotation.h,annotation.label,annotation.key,canvas,isSelectable ? true : false)
+                return new Rectangle(annotation.x, annotation.y, annotation.w, annotation.h,
+                                    annotation.label, annotation.key, canvas, isSelectable ? true : false, shapeStyle)
             ;}))
             setAnnotations(annotationsData)
         }
@@ -188,7 +191,6 @@ const AnnotationCanvas = ({w, h, image, annotationsData, OnAnnotationsChange, On
             </canvas>
         <Tooltip display={onHover ? "block" : "none"} top={currentTooltip.top} left={currentTooltip.left}>{currentTooltip.label}</Tooltip>
         </PageWrapper>
-
     )
 }
 export default AnnotationCanvas
