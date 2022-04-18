@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import image from "../../Images/delete-svgrepo-com.svg"
+import {deleteIcon} from "../../Images/images_exports"
 class TextInput{
     constructor(data){
         this.label = data.label
@@ -64,12 +64,10 @@ class TextInput{
         fabric.Textbox.prototype.cacheProperties = fabric.Textbox.prototype.cacheProperties.concat('active');
 
         this.shape = new fabric.Textbox(this.text,this.options)
-
-        var deleteIcon = image
         var img = document.createElement('img');
         img.src = deleteIcon;
 
-        fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+        fabric.Textbox.prototype.controls.deleteControl = new fabric.Control({
             x: 0.5,
             y: 0.5,
             offsetY: 16,

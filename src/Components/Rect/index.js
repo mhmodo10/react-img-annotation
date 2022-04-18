@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import image from "../../Images/delete-svgrepo-com.svg"
+import {deleteIcon} from "../../Images/images_exports"
 class Rectangle{
     constructor(data){
         this.label = data.label
@@ -33,7 +33,6 @@ class Rectangle{
 
         }
         this.shape = new fabric.Rect(this.options)
-        var deleteIcon = image
         var img = document.createElement('img');
         img.src = deleteIcon;
 
