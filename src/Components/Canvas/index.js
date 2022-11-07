@@ -2,8 +2,8 @@ import React from 'react'
 import { useEffect, useState } from "react"
 import { fabric } from 'fabric'
 import Rectangle from '../Rect'
-import { Tooltip, PageWrapper } from './StyledCanvas'
 import TextInput from '../TextInput'
+import './style.css'
 const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect,
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
                             activeAnnotation, highlightedAnnotation}) =>{
@@ -14,7 +14,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
     const [selectedAnnotation, setSelectedAnnotation] = useState(null)
     var isSelected = false
-    var altClicked = false
     var isExpired = true
 
     //find target in array
@@ -32,21 +31,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 return new Rectangle(data)
         }
     }
-    const OnButtonClicked = (e) =>{
-        if(e.code === "AltLeft" && !altClicked){
-            altClicked = true
-        }
-    }
 
     const OnButtonUp = (e) =>{
         e.preventDefault()
-        if(e.code === "AltLeft" && altClicked){
-            altClicked = false
-        }
         if(e.code === "KeyD" && selectedAnnotation){
             if(selectedAnnotation.get('type') === "textbox"){
                 if(!selectedAnnotation.isEditing){
-                    canvas.remove(selectedAnnotation)
                     setSelectedAnnotation(null)
                 }
             }
@@ -59,7 +49,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //handles canvas zoom
     const ZoomCanvas = (opt) =>{
-        if(altClicked){
+        if(opt.e.altKey){
             var delta = opt.e.deltaY;
             var zoom = canvas.getZoom();
             zoom *= 0.999 ** delta;
@@ -116,7 +106,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const OnMouseOver = (e) =>{
         if(e.target && !isSelected){
             setOnHover(true)
-            setCurrentTooltip({top : e.e.clientY + 15, left : e.e.clientX, label : e.target.data.label})
+            setCurrentTooltip({top : e.target.top + 25, left : e.target.left, label : e.target.data.label})
         }
         else{
             setOnHover(false)
@@ -145,7 +135,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                             w : ann.scaleX ? ann.width * ann.scaleX : ann.width,
                             h : ann.scaleY ? ann.height * ann.scaleY : ann.height,
                             text : ann.text ? ann.text : ''
-                            
                         }
                     case "rect":
                         return {
@@ -203,7 +192,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             canvas.on('mouse:move',OnMouseOver)
             canvas.on('mouse:dblclick',OnDoubleClick)
             canvas.on('selection:created', OnObjectSelected)
-            canvas.on('mouse:wheel',ZoomCanvas)
+            canvas.on('mouse:wheel',(opt)=>{ZoomCanvas(opt)},{passive: true})
             canvas.on('selection:cleared', () => {isSelected = false; setSelectedAnnotation(null)})
         }
     }
@@ -226,7 +215,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //changes label of annotation
     const updateLabel = () =>{
         if(modifiedLabel){
-            canvasAnnotations.map((canvasAnnotation,i) =>{
+            canvasAnnotations.forEach((canvasAnnotation,i) =>{
                 if(canvasAnnotation.shape.data.key === modifiedLabel.key){
                     canvasAnnotation.shape.data.label = modifiedLabel.label
                 }
@@ -253,7 +242,8 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             isSelectable : isSelectable ? true : false,
             style : chosenStyle,
             type : ann.type,
-            text : ann.text ? ann.text : ""
+            text : ann.text ? ann.text : "",
+            fontSize : ann.fontSize ? ann.fontSize : 8
         }
     }
 
@@ -271,7 +261,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //updates annotations
     const updateAnnotations = () =>{
         if(canvas){
-            canvas.getObjects().map(o =>{
+            canvas.getObjects().forEach(o =>{
                 canvas.remove(o)
             })
             setCanvasAnnotations(annotationsData.map((ann,i) =>{
@@ -338,21 +328,23 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //add window event listeners on start
     useEffect(() =>{
-        window.addEventListener('keydown',OnButtonClicked)
         window.addEventListener('keyup',OnButtonUp)
         return () =>{
-            window.removeEventListener('keydown',OnButtonClicked)
             window.removeEventListener('keyup',OnButtonUp)
         }
     })
     return (
-        <PageWrapper>
+        <div className="pageWrapper">
             <canvas id="c"
             width={w}
             height={h}>
             </canvas>
-        <Tooltip display={onHover ? "block" : "none"} top={currentTooltip.top} left={currentTooltip.left}>{currentTooltip.label}</Tooltip>
-        </PageWrapper>
+        <div className="toolTip" style={{
+            display : `${onHover ? "block" : 'none'}`,
+            top: currentTooltip.top,
+            left: currentTooltip.left
+        }}>{currentTooltip.label}</div>
+        </div>
     )
 }
 export default AnnotationCanvas

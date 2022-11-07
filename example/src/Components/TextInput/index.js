@@ -23,7 +23,7 @@ class TextInput{
             objectCaching: false,
             stroke: 'transparent',
             fill : "black",
-            fontSize : 14,
+            fontSize : data.fontSize ? data.fontSize : 8,
             strokeWidth: data.style.strokeWidth ? data.style.strokeWidth :2,
             label: this.label,
             data : {

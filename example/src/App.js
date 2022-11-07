@@ -1,6 +1,6 @@
 import React from 'react'
 import AnnotationCanvas from './Components/Canvas'
-import {useState,useEffect,useCallback} from 'react'
+import {useState,useEffect} from 'react'
 import 'react-img-annotation/dist/index.css'
 
 const App = () => {
@@ -22,7 +22,36 @@ const App = () => {
       return box
     }))
   }
-
+  const b2 = [
+    {
+      x : 0,
+      y : 0,
+      w : 100,
+      h : 100,
+      key : 0,
+      label: "box1",
+      type : "RECT",
+      text: ""
+    },
+    {
+      x : 130,
+      y : 0,
+      w : 100,
+      h : 200,
+      key : 1,
+      label: "box2",
+      type: "RECT"
+    },
+    {
+      x : 200,
+      y : 200,
+      w : 100,
+      h : 100,
+      key : 2,
+      label: "box3",
+      type: "RECT"
+    }
+  ]
   const [boxes,setBoxes] = useState([
     {
       x : 0,
@@ -32,7 +61,8 @@ const App = () => {
       key : 0,
       label: "box1",
       type : "INPUT",
-      text: "asda"
+      text: "asda",
+      fontSize : 20,
     },
     {
       x : 130,
@@ -72,44 +102,14 @@ const App = () => {
     strokeWidth : 3,
   }
   useEffect(() =>{
-    console.log(boxes)
+    // console.log(boxes)
   },[boxes])
   return (
   <>
       <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg");
     setChosenAnnotation({key : chosenAnnotation.key < 2 ? chosenAnnotation.key + 1 : 0})}}> Another image</div>
-    <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{
-    setBoxes([
-    {
-      x : 0,
-      y : 0,
-      w : 100,
-      h : 100,
-      key : 0,
-      label: "box1",
-      type : "RECT",
-      text: ""
-    },
-    {
-      x : 130,
-      y : 0,
-      w : 100,
-      h : 200,
-      key : 1,
-      label: "box2",
-      type: "RECT"
-    },
-    {
-      x : 200,
-      y : 200,
-      w : 100,
-      h : 100,
-      key : 2,
-      label: "box3",
-      type: "RECT"
-    }
-  ])
-  }}> change boxes</div>
+    <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setBoxes(b2)}}> change boxes</div>
+
     <AnnotationCanvas w={1323} h={548}
     image={currentImage}
     annotationsData={boxes}
