@@ -1,0 +1,15 @@
+.pageWrapper {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: fit-content;
+    height: fit-content;
+    flex-direction: column;
+}
+
+.toolTip {
+    background : blue;
+    position : absolute;
+    color: white;
+    pointer-events: none;
+}
