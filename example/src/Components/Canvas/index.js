@@ -6,15 +6,13 @@ import TextInput from '../TextInput'
 import './style.css'
 const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect,
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
-                            activeAnnotation, highlightedAnnotation}) =>{
+                            activeAnnotation, highlightedAnnotation, page_num}) =>{
     const [canvas,setCanvas] = useState()
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
-    const [annotations, setAnnotations] = useState([-1])
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
     const [selectedAnnotation, setSelectedAnnotation] = useState(null)
     var isSelected = false
-    var isExpired = true
 
     //find target in array
     const isInArray = (target, arr) =>{
@@ -31,7 +29,22 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 return new Rectangle(data)
         }
     }
-
+    const OnBoxesUpdate = () =>{
+        OnBoxesChange(canvas.getObjects().map((annotation, i) => {
+            return {
+                x : annotation.left,
+                y : annotation.top,
+                w : annotation.scaleX ? annotation.width * annotation.scaleX : annotation.width,
+                h : annotation.scaleY ? annotation.height * annotation.scaleY : annotation.height,
+                page_num : page_num ?? null,
+                ...annotation.data
+            }
+        }))
+    }
+    const OnBoxesChange = (anns) =>{
+        if(OnAnnotationsChange)
+            OnAnnotationsChange(anns)
+    }
     const OnButtonUp = (e) =>{
         e.preventDefault()
         if(e.code === "KeyD" && selectedAnnotation){
@@ -86,19 +99,8 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             }
             let rect = createObject(data.type,data)
             setCanvasAnnotations(canvasAnnotations => [...canvasAnnotations,rect])
-            setAnnotations(annotations => [...annotations,{
-                x : e.pointer.x,
-                y : e.pointer.y,
-                h : rect.shape.height,
-                w : rect.shape.width,
-                key : rect.shape.data.key,
-                label : rect.shape.data.label,
-                type : rect.type,
-                isSelectable : data.isSelectable,
-                style : shapeStyle,
-            }])
+            OnBoxesUpdate()
             canvas.setActiveObject(rect.shape)
-            isExpired = true
         }
     }
 
@@ -116,40 +118,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //on remove object
     const OnObjectRemoved = (e) =>{
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key))
-        setAnnotations(annotations => annotations.filter(annotation => annotation.key !== e.target.data.key))
-        isExpired = true
+        OnBoxesUpdate()
     }
 
     //detects change in objects
     const OnObjectChanged = (e) => {
-        isExpired = true
-        let ann = e.target
-        setAnnotations(annotations => annotations.map((annotation,i) =>{
-            if(ann.data.key === annotation.key){
-                switch(ann.get('type')){
-                    case "textbox":
-                        return {
-                            ...annotation,
-                            x : ann.left,
-                            y : ann.top,
-                            w : ann.scaleX ? ann.width * ann.scaleX : ann.width,
-                            h : ann.scaleY ? ann.height * ann.scaleY : ann.height,
-                            text : ann.text ? ann.text : ''
-                        }
-                    case "rect":
-                        return {
-                            ...annotation,
-                            x : ann.left,
-                            y : ann.top,
-                            w : ann.scaleX ? ann.width * ann.scaleX : ann.width,
-                            h : ann.scaleY ? ann.height * ann.scaleY : ann.height,
-                        }
-                    default:
-                        break;
-                }
-            }
-            return annotation
-        }))
+        OnBoxesUpdate()
     }
 
     //highlights object
@@ -187,7 +161,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const addEventListeners = () =>{
         if(canvas) {
             canvas.setBackgroundImage(image,canvas.renderAll.bind(canvas))
-            canvas.on('object:modified',OnObjectChanged)
+            canvas.on('object:modified',(e)=>{OnObjectChanged({...e,annotationsData})})
             canvas.on('object:removed',OnObjectRemoved)
             canvas.on('mouse:move',OnMouseOver)
             canvas.on('mouse:dblclick',OnDoubleClick)
@@ -199,7 +173,10 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //initialize objects on canvas
     const initializeObjects = () =>{
-        if(annotationsData && annotations[0] === -1 && canvas){
+        if(annotationsData && canvas){
+            canvas.getObjects().forEach(o =>{
+                canvas.remove(o)
+            })
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
                 let data = getAnnotationData(annotation)
                 if(chosenAnnotations && isInArray(annotation,chosenAnnotations)){
@@ -208,7 +185,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 data.style = shapeStyle
                 return createObject(data.type,data)
             ;}))
-            setAnnotations(annotationsData)
+            OnBoxesUpdate()
         }
     }
 
@@ -220,12 +197,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                     canvasAnnotation.shape.data.label = modifiedLabel.label
                 }
             })
-            setAnnotations(annotations => annotations.map((annotation,i) =>{
-                    if(annotation.key === modifiedLabel.key){
-                        return {...annotation, label : modifiedLabel.label}
-                    }
-                    return annotation
-            }))
+            OnBoxesChange(annotationsData.map((annotation,i) =>{
+                if(annotation.key === modifiedLabel.key){
+                    return {...annotation, label : modifiedLabel.label}
+                }
+                return annotation
+        }))
         }
     }
 
@@ -258,32 +235,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         }
     }
 
-    //updates annotations
-    const updateAnnotations = () =>{
-        if(canvas){
-            canvas.getObjects().forEach(o =>{
-                canvas.remove(o)
-            })
-            setCanvasAnnotations(annotationsData.map((ann,i) =>{
-                let data = getAnnotationData(ann)
-                if(isInArray(ann,chosenAnnotations)){
-                    return createObject(data.type,data)
-                }
-                else{
-                    data.style = shapeStyle
-                    return createObject(data.type,data)
-                }
-            }))
-            setAnnotations(annotationsData)
-        }
-    }
-
     const updateCanvas = () =>{
         if(!canvas){
             let temp_canvas = new fabric.Canvas('c',{
                 height: h,
                 width: w,
-                selection : false,
+                selection : true,
              })
              temp_canvas.setBackgroundImage(image,temp_canvas.renderAll.bind(temp_canvas))
             setCanvas(temp_canvas)
@@ -295,36 +252,23 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         }
     }
 
-    const updateAnnotationsCallback = () =>{
-        if(OnAnnotationsChange && annotations[0] !== -1 && isExpired){
-            OnAnnotationsChange(annotations)
-            isExpired = false
-        }
-    }
-
     //on image change
     useEffect(updateCanvas,[image])
 
     //on highlighted object change
     useEffect(higlightObject,[highlightedAnnotation])
 
-    //on annotationsData adn chosen annotations change
-    useEffect(updateAnnotations,[annotationsData, chosenAnnotations])
-
     //on canvas change
     useEffect(addEventListeners,[canvas])
 
     //on annotationsData change
-    useEffect(initializeObjects,[annotationsData,canvas])
+    useEffect(initializeObjects,[page_num,canvas])
 
     //on modified label change
     useEffect(updateLabel,[modifiedLabel])
 
     //on active annotation change
     useEffect(activateObjects,[activeAnnotation])
-
-    //callback on annotations change
-    useEffect(updateAnnotationsCallback,[annotations])
 
     //add window event listeners on start
     useEffect(() =>{
