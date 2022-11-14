@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useEffect, useState,useRef } from "react"
+import { useEffect, useState } from "react"
 import { fabric } from 'fabric'
 import Rectangle from '../Rect'
 import TextInput from '../TextInput'
@@ -8,7 +8,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
                             activeAnnotation, highlightedAnnotation, page_num}) =>{
     const [canvas,setCanvas] = useState()
-    const canvasRef = useRef(null)
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
@@ -295,20 +294,19 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         }
     })
     return (
-        <>
-        <div id="wrapper" className="pageWrapper">
-            <canvas id="c"
-            width={w}
-            height={h}
-            ref={canvasRef}>
-            </canvas>
+        <div>
+            <div id="wrapper" className="pageWrapper">
+                <canvas id="c"
+                width={w}
+                height={h}>
+                </canvas>
+            </div>
+            <div className="toolTip" style={{
+                display : `${onHover ? "block" : 'none'}`,
+                top: currentTooltip.top,
+                left: currentTooltip.left
+            }}>{currentTooltip.label}</div>
         </div>
-        <div className="toolTip" style={{
-            display : `${onHover ? "block" : 'none'}`,
-            top: currentTooltip.top,
-            left: currentTooltip.left
-        }}>{currentTooltip.label}</div>
-        </>
     )
 }
 export default AnnotationCanvas
