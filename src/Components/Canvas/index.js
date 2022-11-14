@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useEffect, useState } from "react"
+import { useEffect, useState,useRef } from "react"
 import { fabric } from 'fabric'
 import Rectangle from '../Rect'
 import TextInput from '../TextInput'
@@ -8,6 +8,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
                             activeAnnotation, highlightedAnnotation, page_num}) =>{
     const [canvas,setCanvas] = useState()
+    const canvasRef = useRef(null)
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
@@ -251,24 +252,16 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     }
 
     const updateCanvas = () =>{
-        if(!canvas){
-            let temp_canvas = new fabric.Canvas('c',{
-                height: h,
-                width: w,
-                selection : true,
-             })
-             temp_canvas.setBackgroundImage(image,temp_canvas.renderAll.bind(temp_canvas))
-            setCanvas(temp_canvas)
-        }
-        else{
+        if(canvas){
             canvas.setHeight(h)
             canvas.setWidth(w)
             canvas.setBackgroundImage(image,canvas.renderAll.bind(canvas))
+            canvas.renderAll()
         }
     }
 
     //on image change
-    useEffect(updateCanvas,[image])
+    useEffect(updateCanvas,[image,canvas])
 
     //on highlighted object change
     useEffect(higlightObject,[highlightedAnnotation])
@@ -285,6 +278,15 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //on active annotation change
     useEffect(activateObjects,[activeAnnotation])
 
+    useEffect(() =>{
+        if(!canvas && w !== null && h !== null){
+            let temp_canvas = new fabric.Canvas('c',{
+                selection : true,
+             })
+            setCanvas(temp_canvas)
+        }
+    },[canvas])
+
     //add window event listeners on start
     useEffect(() =>{
         window.addEventListener('keyup',OnButtonUp)
@@ -293,17 +295,20 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         }
     })
     return (
-        <div className="pageWrapper">
+        <>
+        <div id="wrapper" className="pageWrapper">
             <canvas id="c"
             width={w}
-            height={h}>
+            height={h}
+            ref={canvasRef}>
             </canvas>
+        </div>
         <div className="toolTip" style={{
             display : `${onHover ? "block" : 'none'}`,
             top: currentTooltip.top,
             left: currentTooltip.left
         }}>{currentTooltip.label}</div>
-        </div>
+        </>
     )
 }
 export default AnnotationCanvas

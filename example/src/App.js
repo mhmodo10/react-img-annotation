@@ -69,23 +69,21 @@ const App = () => {
   },[boxes])
   return (
   <>
-      <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg");
-    setChosenAnnotation({key : chosenAnnotation.key < 2 ? chosenAnnotation.key + 1 : 0})}}> Another image</div>
+      <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/WOPA160517_D056-resized.jpg?crop=864%2C0%2C1728%2C2304&wid=600&hei=800&scl=2.88")}}> Another image</div>
     <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setBoxes(b2); setPage(page+1)}}> change boxes</div>
     {
       boxes &&
-      <AnnotationCanvas w={1323} h={548}
+
+      <AnnotationCanvas 
+      w={1323}
+      h={548}
       image={currentImage}
       annotationsData={boxes}
       OnAnnotationSelect={OnAnnotationSelected}
       OnAnnotationsChange={OnAnnotationsChanged}
-      // modifiedLabel={null}
       isSelectable={true}
       shapeStyle={style}
       chosenStyle={chosenStyle}
-      // chosenAnnotations={[chosenAnnotation]}
-      // activeAnnotation={chosenAnnotation}
-      // highlightedAnnotation={chosenAnnotation}
       page_num={page}></AnnotationCanvas>
     }
 
