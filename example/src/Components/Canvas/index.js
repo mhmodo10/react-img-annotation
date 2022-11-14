@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useEffect, useState } from "react"
 import { fabric } from 'fabric'
 import Rectangle from '../Rect'
@@ -12,7 +12,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const [onHover,setOnHover] = useState(false)
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
     const [selectedAnnotation, setSelectedAnnotation] = useState(null)
-    var isSelected = false
 
     //find target in array
     const isInArray = (target, arr) =>{
@@ -31,20 +30,34 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     }
     const OnBoxesUpdate = () =>{
         OnBoxesChange(canvas.getObjects().map((annotation, i) => {
-            return {
-                x : annotation.left,
-                y : annotation.top,
-                w : annotation.scaleX ? annotation.width * annotation.scaleX : annotation.width,
-                h : annotation.scaleY ? annotation.height * annotation.scaleY : annotation.height,
-                page_num : page_num ?? null,
-                ...annotation.data
+            if (annotation.group){
+                return {
+                    x : annotation.left + annotation.group.left + annotation.group.width / 2,
+                    y : annotation.top + annotation.group.top + annotation.group.height / 2,
+                    w : annotation.group.scaleX ? annotation.width * annotation.group.scaleX : annotation.width,
+                    h : annotation.group.scaleY ? annotation.height * annotation.group.scaleY : annotation.height,
+                    page_num : page_num ?? null,
+                    ...annotation.data
+                }
             }
+            else {
+                return {
+                    x : annotation.aCoords.tl.x,
+                    y : annotation.aCoords.tl.y,
+                    w : annotation.scaleX ? annotation.width * annotation.scaleX : annotation.width,
+                    h : annotation.scaleY ? annotation.height * annotation.scaleY : annotation.height,
+                    page_num : page_num ?? null,
+                    ...annotation.data
+                }
+            }
+
         }))
     }
-    const OnBoxesChange = (anns) =>{
+    const OnBoxesChange = useCallback((anns) =>{
         if(OnAnnotationsChange)
             OnAnnotationsChange(anns)
-    }
+    },[OnAnnotationsChange])
+
     const OnButtonUp = (e) =>{
         e.preventDefault()
         if(e.code === "KeyD" && selectedAnnotation){
@@ -77,7 +90,8 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //creates new rectangle
     const OnDoubleClick = (e) =>{
-        if(!isSelected){
+        console.log(canvas.getActiveObjects())
+        if(canvas.getActiveObjects()){
             var highest = 0
             canvas.getObjects().forEach((o, i) =>{
                 if(highest < o.data.key){
@@ -106,7 +120,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //shows tooltip
     const OnMouseOver = (e) =>{
-        if(e.target && !isSelected){
+        if(e.target && canvas.getActiveObjects().length === 0){
             setOnHover(true)
             setCurrentTooltip({top : e.target.top + 25, left : e.target.left, label : e.target.data.label})
         }
@@ -118,11 +132,13 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //on remove object
     const OnObjectRemoved = (e) =>{
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key))
+        console.log('removed')
         OnBoxesUpdate()
     }
 
     //detects change in objects
     const OnObjectChanged = (e) => {
+        console.log('changed')
         OnBoxesUpdate()
     }
 
@@ -142,8 +158,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //on object selection
     const OnObjectSelected = (e) =>{
-        isSelected = true
-        if(OnAnnotationSelect){
+        if(OnAnnotationSelect && e.selected.length === 1){
             let annotation = {
                 x : e.selected[0].left,
                 y : e.selected[0].top,
@@ -161,19 +176,20 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const addEventListeners = () =>{
         if(canvas) {
             canvas.setBackgroundImage(image,canvas.renderAll.bind(canvas))
-            canvas.on('object:modified',(e)=>{OnObjectChanged({...e,annotationsData})})
+            canvas.on('object:modified',OnObjectChanged)
             canvas.on('object:removed',OnObjectRemoved)
             canvas.on('mouse:move',OnMouseOver)
             canvas.on('mouse:dblclick',OnDoubleClick)
             canvas.on('selection:created', OnObjectSelected)
-            canvas.on('mouse:wheel',(opt)=>{ZoomCanvas(opt)},{passive: true})
-            canvas.on('selection:cleared', () => {isSelected = false; setSelectedAnnotation(null)})
+            canvas.on('mouse:wheel',(opt)=>{ZoomCanvas(opt)})
+            canvas.on('selection:cleared', () => {setSelectedAnnotation(null)})
         }
     }
 
     //initialize objects on canvas
     const initializeObjects = () =>{
         if(annotationsData && canvas){
+            console.log('init')
             canvas.getObjects().forEach(o =>{
                 canvas.remove(o)
             })
@@ -185,7 +201,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 data.style = shapeStyle
                 return createObject(data.type,data)
             ;}))
-            OnBoxesUpdate()
         }
     }
 
