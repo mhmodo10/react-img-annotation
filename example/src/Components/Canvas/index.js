@@ -90,7 +90,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //creates new rectangle
     const OnDoubleClick = (e) =>{
-        console.log(canvas.getActiveObjects())
         if(canvas.getActiveObjects()){
             var highest = 0
             canvas.getObjects().forEach((o, i) =>{
@@ -122,7 +121,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const OnMouseOver = (e) =>{
         if(e.target && canvas.getActiveObjects().length === 0){
             setOnHover(true)
-            setCurrentTooltip({top : e.target.top + 25, left : e.target.left, label : e.target.data.label})
+            setCurrentTooltip({top : e.e.clientY, left : e.e.clientX, label : e.target.data.label})
         }
         else{
             setOnHover(false)
