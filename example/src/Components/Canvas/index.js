@@ -278,8 +278,8 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     useEffect(activateObjects,[activeAnnotation])
 
     useEffect(() =>{
-        if(!canvas && w !== null && h !== null){
-            let temp_canvas = new fabric.Canvas('c',{
+        if(!canvas && w && h){
+            let temp_canvas = new fabric.Canvas("c",{
                 selection : true,
              })
             setCanvas(temp_canvas)
@@ -295,12 +295,11 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     })
     return (
         <div>
-            <div id="wrapper" className="pageWrapper">
-                <canvas id="c"
-                width={w}
-                height={h}>
-                </canvas>
-            </div>
+            <canvas id="c"
+            width={w}
+            height={h}>
+            </canvas>
+
             <div className="toolTip" style={{
                 display : `${onHover ? "block" : 'none'}`,
                 top: currentTooltip.top,
