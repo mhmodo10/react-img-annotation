@@ -81,7 +81,7 @@ class AnnotationRect{
 
         this.textBox = new fabric.Textbox(this.text, this.textBoxOptions)
         this.rect = new fabric.Rect(this.rectOptions)
-        this.confidenceText = new fabric.Text("98%", this.confidenceOptions)
+        this.confidenceText = new fabric.Text(`${this.confidence ? this.confidence * 100 : 0}%`, this.confidenceOptions)
         this.group = new fabric.Group([this.confidenceText, this.rect], this.groupOptions)
         this.canvas.add(this.textBox)
         this.canvas.add(this.group)
