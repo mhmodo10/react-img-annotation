@@ -1,6 +1,6 @@
 {
   "name": "react-img-annotation",
-  "version": "1.1.26",
+  "version": "1.1.27",
   "description": "Made with create-react-library",
   "author": "mhmodo10",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {
-    "react": "^16.0.0"
+    "fabric": "^5.2.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
@@ -57,6 +57,5 @@
     "dist"
   ],
   "dependencies": {
-    "fabric": "^5.2.4"
   }
 }
