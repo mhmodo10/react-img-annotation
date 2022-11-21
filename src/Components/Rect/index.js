@@ -11,26 +11,28 @@ class Rectangle{
         this.h = data.h
         this.text = data.text
         this.type = data.type
+        this.style = {
+            stroke: data.style.stroke ? data.style.stroke : "black",
+            fill : data.style.fill ? data.style.fill : "transparent",
+            strokeWidth: data.style.strokeWidth ? data.style.strokeWidth : 2,
+            borderColor: data.style.borderColor ? data.style.borderColor : 'red',
+            cornerColor: data.style.cornerColor ? data.style.cornerColor : 'green',
+            cornerSize: data.style.cornerSize ? data.style.cornerSize :6,
+            transparentCorners: data.style.transparentCorners ? data.style.transparentCorners :false,
+        }
         this.options = {
+            ...this.style,
             left: data.x,
             top: data.y,
             width: data.w,
             height: data.h,
             objectCaching: false,
-            stroke: data.style.stroke ? data.style.stroke : "black",
-            fill : data.style.fill ? data.style.fill : "transparent",
-            strokeWidth: data.style.strokeWidth ? data.style.strokeWidth : 2,
             label: this.label,
             data : {
                 key : data.key,
                 label: data.label,
             },
-            borderColor: data.style.borderColor ? data.style.borderColor : 'red',
-            cornerColor: data.style.cornerColor ? data.style.cornerColor : 'green',
-            cornerSize: data.style.cornerSize ? data.style.cornerSize :6,
-            transparentCorners: data.style.transparentCorners ? data.style.transparentCorners :false,
             selectable : data.isSelectable,
-
         }
         this.shape = new fabric.Rect(this.options)
         var img = document.createElement('img');

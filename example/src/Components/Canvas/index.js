@@ -130,9 +130,11 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //on remove object
     const OnObjectRemoved = (e) =>{
-        setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key))
+        setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key && canvasAnnotation.shape.data.page_num !== e.target.data.page_num))
         console.log('removed')
-        OnBoxesUpdate()
+        if(e.target.data.page_num === page_num){
+            OnBoxesUpdate()
+        }
     }
 
     //detects change in objects
@@ -188,7 +190,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //initialize objects on canvas
     const initializeObjects = () =>{
         if(annotationsData && canvas){
-            console.log('init')
             canvas.getObjects().forEach(o =>{
                 canvas.remove(o)
             })

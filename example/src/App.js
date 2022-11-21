@@ -11,19 +11,20 @@ const App = () => {
   const [showAnnotations, setShowAnnotations] = useState(true)
   const [boxes,setBoxes] = useState([    {
     x : 0,
-    y : 10,
+    y : 100,
     w : 100,
     h : 100,
-    key : 0,
+    key : 20,
     label: "box1",
-    type : "INPUT",
+    type : "RECT",
     text: "first text",
     confidence: 0.7
   },])
   const OnAnnotationSelected = (a) =>{
   }
-  const OnAnnotationChanged = (ann) =>{
-    console.log(ann)
+  const OnAnnotationsChanged = (anns) =>{
+    console.log(anns)
+    setBoxes(anns)
   }
   const OnInputChange = (e) =>{
   }
@@ -85,7 +86,7 @@ const App = () => {
   <div onClick={()=>{setShowAnnotations(!showAnnotations)}}>set visible</div>
       <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg")}}> Another image</div>
     <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setBoxes(b2); setPage(page+1)}}> change boxes</div>
-      {
+      {/* {
         boxes && currentImage &&
         <AnnotationsEditor
           w={1920}
@@ -95,21 +96,21 @@ const App = () => {
           showAnnotations={showAnnotations}
           // shapeStyle={style}
           OnTextChange={OnAnnotationChanged}/>
-      }
+      } */}
     {
-      // boxes &&
+      boxes &&
 
-      // <AnnotationCanvas 
-      // w={1323}
-      // h={548}
-      // image={currentImage}
-      // annotationsData={boxes}
-      // OnAnnotationSelect={OnAnnotationSelected}
-      // OnAnnotationsChange={OnAnnotationsChanged}
-      // isSelectable={true}
-      // shapeStyle={style}
-      // chosenStyle={chosenStyle}
-      // page_num={page}></AnnotationCanvas>
+      <AnnotationCanvas 
+      w={1323}
+      h={548}
+      image={currentImage}
+      annotationsData={boxes}
+      OnAnnotationSelect={OnAnnotationSelected}
+      OnAnnotationsChange={OnAnnotationsChanged}
+      isSelectable={true}
+      shapeStyle={style}
+      chosenStyle={chosenStyle}
+      page_num={page}></AnnotationCanvas>
     }
 
     {
