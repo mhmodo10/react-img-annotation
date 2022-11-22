@@ -33,6 +33,8 @@ class Rectangle{
                 label: data.label,
             },
             selectable : data.isSelectable,
+            objectClass : this,
+            type : 'defaultRect'
         }
         this.shape = new fabric.Rect(this.options)
         var img = document.createElement('img');
@@ -82,11 +84,9 @@ class Rectangle{
             type : this.type
         }
     }
-    setStyle(data){
-        let style = {
-            ...data.style
-        }
+    setStyle(style){
         this.shape.set({
+            ...this.style,
             ...style
         })
         this.canvas.renderAll()

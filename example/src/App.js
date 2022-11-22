@@ -6,7 +6,7 @@ import AnnotationsEditor from './Components/AnnotationsEditor'
 const App = () => {
   const [modifiedLabel,setModifiedLabel] = useState({key : -1, label : ""})
   const [currentImage, setCurrentImage] = useState("https://assets.website-files.com/609d5d3c4d120e9c52e52b07/609d5d3c4d120e370de52b70_invoice-lp-light-border.png")
-  const [chosenAnnotation,setChosenAnnotation] = useState({key : 0})
+  const [chosenAnnotation,setChosenAnnotation] = useState({key : 0, page_num : 0})
   const [page, setPage] = useState(0)
   const [showAnnotations, setShowAnnotations] = useState(true)
   const [boxes,setBoxes] = useState([    {
@@ -14,11 +14,12 @@ const App = () => {
     y : 100,
     w : 100,
     h : 100,
-    key : 20,
+    key : 0,
     label: "box1",
     type : "RECT",
     text: "first text",
-    confidence: 0.7
+    confidence: 0.7,
+    page_num : 0
   },])
   const OnAnnotationSelected = (a) =>{
   }
@@ -110,6 +111,7 @@ const App = () => {
       isSelectable={true}
       shapeStyle={style}
       chosenStyle={chosenStyle}
+      chosenAnnotations={[chosenAnnotation]}
       page_num={page}></AnnotationCanvas>
     }
 

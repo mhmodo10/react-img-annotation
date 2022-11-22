@@ -196,9 +196,9 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
                 let data = getAnnotationData(annotation)
                 if(chosenAnnotations && isInArray(annotation,chosenAnnotations)){
+                    data.style = chosenStyle
                     return createObject(data.type,data)
                 }
-                data.style = shapeStyle
                 return createObject(data.type,data)
             ;}))
         }
@@ -232,7 +232,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             key : ann.key,
             canvas : canvas,
             isSelectable : isSelectable ? true : false,
-            style : chosenStyle,
+            style : shapeStyle,
             type : ann.type,
             text : ann.text ? ann.text : "",
             fontSize : ann.fontSize ? ann.fontSize : 8
@@ -259,6 +259,15 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         }
     }
 
+    const updateChosenAnnotations = () => {
+        if(chosenStyle && canvas && chosenAnnotations){
+            canvas.getObjects('defaultRect').forEach(o =>{
+                let match = chosenAnnotations.filter(ann => ann.key === o.data.key)
+                if(match.length === 1)
+                    o.objectClass.setStyle(chosenStyle)
+            })
+        }
+    }
     //on image change
     useEffect(updateCanvas,[image,canvas])
 
@@ -276,6 +285,8 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //on active annotation change
     useEffect(activateObjects,[activeAnnotation])
+
+    useEffect(updateChosenAnnotations, [chosenAnnotations, canvas])
 
     useEffect(() =>{
         if(!canvas && w && h){
