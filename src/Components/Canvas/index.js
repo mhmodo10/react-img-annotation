@@ -263,7 +263,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         if(chosenStyle && canvas && chosenAnnotations){
             canvas.getObjects('defaultRect').forEach(o =>{
                 let match = chosenAnnotations.filter(ann => ann.key === o.data.key)
-                if(match.length === 1)
+                if(match.length > 0)
                     o.objectClass.setStyle(chosenStyle)
                 else
                     o.objectClass.setStyle(shapeStyle)
