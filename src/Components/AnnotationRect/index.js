@@ -79,6 +79,30 @@ class AnnotationRect{
             type : "annotationGroup"
         }
 
+        var originalRender = fabric.Textbox.prototype._render;
+            fabric.Textbox.prototype._render = function(ctx) {
+            originalRender.call(this, ctx);
+            //Don't draw border if it is active(selected/ editing mode)
+            if (this.active) return;
+            
+            var w = this.width,
+                h = this.height,
+                x = -this.width / 2,
+                y = -this.height / 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + w, y);
+            ctx.lineTo(x + w, y + h);
+            ctx.lineTo(x, y + h);
+            ctx.lineTo(x, y);
+            ctx.closePath();
+            var stroke = ctx.strokeStyle;
+            ctx.strokeStyle = this.borderColor;
+            ctx.stroke();
+            ctx.strokeStyle = stroke;
+        }
+        fabric.Textbox.prototype.cacheProperties = fabric.Textbox.prototype.cacheProperties.concat('active');
+
         this.textBox = new fabric.Textbox(this.text, this.textBoxOptions)
         this.rect = new fabric.Rect(this.rectOptions)
         this.confidenceText = new fabric.Text(`${this.confidence ? this.confidence * 100 : 0}%`, this.confidenceOptions)
