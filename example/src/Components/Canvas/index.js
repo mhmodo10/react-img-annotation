@@ -104,6 +104,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 w : 100,
                 h : 100,
                 label : `box ${key}`,
+                page_num : page_num,
                 key : key,
                 canvas : canvas,
                 type : "RECT",
