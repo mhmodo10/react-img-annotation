@@ -3,18 +3,21 @@ import AnnotationCanvas from './Components/Canvas'
 import {useState,useEffect} from 'react'
 import 'react-img-annotation/dist/index.css'
 import AnnotationsEditor from './Components/AnnotationsEditor'
+import invImage from './Images/invoice11-1.jpg'
 const App = () => {
   const [modifiedLabel,setModifiedLabel] = useState({key : -1, label : ""})
-  const [currentImage, setCurrentImage] = useState("https://assets.website-files.com/609d5d3c4d120e9c52e52b07/609d5d3c4d120e370de52b70_invoice-lp-light-border.png")
+  const [currentImage, setCurrentImage] = useState(invImage)
   const [chosenAnnotation,setChosenAnnotation] = useState({key : 0, page_num : 0})
   const [page, setPage] = useState(0)
   const [showAnnotations, setShowAnnotations] = useState(true)
   const [boxes,setBoxes] = useState([    {
-    x : 0,
-    y : 100,
-    w : 100,
-    h : 100,
-    key : 0,
+    h: 46.601941747572816,
+    key: 0,
+    label: "box1",
+    page_num: 0,
+    w: 135.92233009708738,
+    x: 1134,
+    y: 814,
     label: "box1",
     type : "RECT",
     text: "first text",
@@ -87,23 +90,23 @@ const App = () => {
   <div onClick={()=>{setShowAnnotations(!showAnnotations)}}>set visible</div>
       <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg")}}> Another image</div>
     <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setBoxes(b2); setPage(page+1)}}> change boxes</div>
-      {/* {
+      {
         boxes && currentImage &&
         <AnnotationsEditor
-          w={1920}
-          h={600}
+          w={1700}
+          h={2200}
           annotationsData={boxes}
           image={currentImage}
           showAnnotations={showAnnotations}
           // shapeStyle={style}
           OnTextChange={OnAnnotationsChanged}/>
-      } */}
-    {
+      }
+    {/* {
       boxes &&
 
       <AnnotationCanvas 
-      w={1323}
-      h={548}
+      w={1700}
+      h={2200}
       image={currentImage}
       annotationsData={boxes}
       OnAnnotationSelect={OnAnnotationSelected}
@@ -113,7 +116,7 @@ const App = () => {
       chosenStyle={chosenStyle}
       chosenAnnotations={[chosenAnnotation]}
       page_num={page}></AnnotationCanvas>
-    }
+    } */}
 
     {
       // boxes.map((box,i) =>{

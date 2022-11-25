@@ -74,7 +74,7 @@ class AnnotationRect{
             ...this.commonOptions,
             hasBorders : false,
             left : this.x,
-            top : this.y,
+            top : this.y - this.fontSize/2 - this.style.strokeWidth,
             subTargetCheck : true,
             type : "annotationGroup"
         }
