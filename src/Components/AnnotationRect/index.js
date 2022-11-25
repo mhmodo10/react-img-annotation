@@ -12,7 +12,8 @@ class AnnotationRect{
         this.text = data?.annotation?.text
         this.confidence = data?.annotation?.confidence
         this.isSelectable = data?.selectable ?? true
-        this.fontSize = data?.fontSize ?? 18
+        this.fontSize = data?.style?.fontSize ?? 18
+        this.confidenceFontSize = data?.style?.confidenceFontSize ?? 18
         this.showTextBoxBorder = true
         this.page_num = data?.annotation?.page_num
         this.style = {
@@ -64,8 +65,8 @@ class AnnotationRect{
         this.confidenceOptions = {
             ...this.commonOptions,
             left : this.x + this.w - this.fontSize,
-            top : this.y - this.fontSize/2 - this.style.strokeWidth,
-            fontSize : (this.fontSize / 2) >= 10 ? this.fontSize/2 : 10,
+            top : this.y - this.confidenceFontSize - this.style.strokeWidth,
+            fontSize : this.confidenceFontSize,
             stroke: 'transparent',
             fill : "black",
         }
@@ -74,7 +75,7 @@ class AnnotationRect{
             ...this.commonOptions,
             hasBorders : false,
             left : this.x,
-            top : this.y - this.fontSize/2 - this.style.strokeWidth,
+            top : this.y - this.confidenceFontSize - this.style.strokeWidth,
             subTargetCheck : true,
             type : "annotationGroup"
         }
