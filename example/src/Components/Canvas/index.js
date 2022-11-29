@@ -4,7 +4,7 @@ import { fabric } from 'fabric'
 import Rectangle from '../Rect'
 import TextInput from '../TextInput'
 import './style.css'
-const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect,
+const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationsDelete, OnAnnotationSelect,
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
                             activeAnnotation, highlightedAnnotation, page_num}) =>{
     const [canvas,setCanvas] = useState()
@@ -12,6 +12,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const [onHover,setOnHover] = useState(false)
     const [canvasAnnotations, setCanvasAnnotations] = useState([])
     const [selectedAnnotation, setSelectedAnnotation] = useState(null)
+    const [currentPageNum, setCurrentPageNum] = useState(page_num)
 
     //find target in array
     const isInArray = (target, arr) =>{
@@ -36,7 +37,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                     y : annotation.top + annotation.group.top + annotation.group.height / 2,
                     w : annotation.group.scaleX ? annotation.width * annotation.group.scaleX : annotation.width,
                     h : annotation.group.scaleY ? annotation.height * annotation.group.scaleY : annotation.height,
-                    page_num : page_num ?? null,
+                    page_num : canvas.page_num,
                     ...annotation.data
                 }
             }
@@ -46,7 +47,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                     y : annotation.aCoords.tl.y,
                     w : annotation.scaleX ? annotation.width * annotation.scaleX : annotation.width,
                     h : annotation.scaleY ? annotation.height * annotation.scaleY : annotation.height,
-                    page_num : page_num ?? null,
+                    page_num : canvas.page_num,
                     ...annotation.data
                 }
             }
@@ -104,7 +105,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 w : 100,
                 h : 100,
                 label : `box ${key}`,
-                page_num : page_num,
+                page_num : canvas.page_num,
                 key : key,
                 canvas : canvas,
                 type : "RECT",
@@ -132,10 +133,14 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //on remove object
     const OnObjectRemoved = (e) =>{
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key && canvasAnnotation.shape.data.page_num !== e.target.data.page_num))
-        console.log('removed')
-        if(e.target.data.page_num === page_num){
-            OnBoxesUpdate()
+        console.log('removed', e.target)
+        console.log('page num', canvas.page_num)
+        if(OnAnnotationsDelete && canvas.page_num === e.target.data.page_num){
+            OnAnnotationsDelete(e.target.data)
         }
+        // if(e.target.data.page_num === page_num){
+        //     OnBoxesUpdate()
+        // }
     }
 
     //detects change in objects
@@ -191,11 +196,14 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //initialize objects on canvas
     const initializeObjects = () =>{
         if(annotationsData && canvas){
+            canvas.set('page_num', currentPageNum)
             canvas.getObjects().forEach(o =>{
                 canvas.remove(o)
             })
+            
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                let data = getAnnotationData(annotation)
+                console.log('page', currentPageNum)
+                let data = getAnnotationData(annotation, currentPageNum)
                 if(chosenAnnotations && isInArray(annotation,chosenAnnotations)){
                     data.style = chosenStyle
                     return createObject(data.type,data)
@@ -223,7 +231,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     }
 
     //returns annotation data object
-    const getAnnotationData = (ann) =>{
+    const getAnnotationData = (ann, pageIndex) =>{
         return {
             x : ann.x,
             y : ann.y,
@@ -231,6 +239,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             h : ann.h,
             label : ann.label,
             key : ann.key,
+            page_num : pageIndex,
             canvas : canvas,
             isSelectable : isSelectable ? true : false,
             style : shapeStyle,
@@ -281,7 +290,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     useEffect(addEventListeners,[canvas])
 
     //on annotationsData change
-    useEffect(initializeObjects,[page_num,canvas])
+    useEffect(initializeObjects,[currentPageNum,canvas])
 
     //on modified label change
     useEffect(updateLabel,[modifiedLabel])
@@ -290,6 +299,9 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     useEffect(activateObjects,[activeAnnotation])
 
     useEffect(updateChosenAnnotations, [chosenAnnotations, canvas])
+
+    useEffect(() => {
+        setCurrentPageNum(page_num)},[page_num])
 
     useEffect(() =>{
         if(!canvas && w && h){

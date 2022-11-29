@@ -11,6 +11,7 @@ class Rectangle{
         this.h = data.h
         this.text = data.text
         this.type = data.type
+        this.page_num = data.page_num
         this.style = {
             stroke: data.style.stroke ? data.style.stroke : "black",
             fill : data.style.fill ? data.style.fill : "transparent",
@@ -31,6 +32,7 @@ class Rectangle{
             data : {
                 key : data.key,
                 label: data.label,
+                page_num : this.page_num
             },
             selectable : data.isSelectable,
             objectClass : this,
