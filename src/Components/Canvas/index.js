@@ -4,7 +4,7 @@ import { fabric } from 'fabric'
 import Rectangle from '../Rect'
 import TextInput from '../TextInput'
 import './style.css'
-const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationSelect,
+const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationsDelete, OnAnnotationSelect,
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
                             activeAnnotation, highlightedAnnotation, page_num}) =>{
     const [canvas,setCanvas] = useState()
@@ -133,9 +133,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     const OnObjectRemoved = (e) =>{
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key && canvasAnnotation.shape.data.page_num !== e.target.data.page_num))
         console.log('removed')
-        if(e.target.data.page_num === page_num){
-            OnBoxesUpdate()
+        if(OnAnnotationsDelete){
+            OnAnnotationsDelete(e.target.data)
         }
+        // if(e.target.data.page_num === page_num){
+        //     OnBoxesUpdate()
+        // }
     }
 
     //detects change in objects
