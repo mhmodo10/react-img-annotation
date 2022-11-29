@@ -133,19 +133,13 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     //on remove object
     const OnObjectRemoved = (e) =>{
         setCanvasAnnotations(canvasAnnotations => canvasAnnotations.filter(canvasAnnotation => canvasAnnotation.shape.data.key !== e.target.data.key && canvasAnnotation.shape.data.page_num !== e.target.data.page_num))
-        console.log('removed', e.target)
-        console.log('page num', canvas.page_num)
         if(OnAnnotationsDelete && canvas.page_num === e.target.data.page_num){
             OnAnnotationsDelete(e.target.data)
         }
-        // if(e.target.data.page_num === page_num){
-        //     OnBoxesUpdate()
-        // }
     }
 
     //detects change in objects
     const OnObjectChanged = (e) => {
-        console.log('changed')
         OnBoxesUpdate()
     }
 
@@ -202,7 +196,6 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             })
             
             setCanvasAnnotations(annotationsData.map((annotation,i) =>{
-                console.log('page', currentPageNum)
                 let data = getAnnotationData(annotation, currentPageNum)
                 if(chosenAnnotations && isInArray(annotation,chosenAnnotations)){
                     data.style = chosenStyle
