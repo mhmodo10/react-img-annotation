@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import AnnotationRect from "../AnnotationRect"
 import { fabric } from "fabric"
-const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeStyle, page_num, showAnnotations}) =>{
+const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeStyle, page_num, showAnnotations, isEditable = true}) =>{
     const [canvas, setCanvas] = useState()
     const initCanvas = () => {
         if(!canvas){
@@ -22,7 +22,8 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
                 let data = {
                     annotation,
                     canvas : canvas,
-                    style : shapeStyle
+                    style : shapeStyle,
+                    isEditable,
                 }
                 new AnnotationRect(data)
             })

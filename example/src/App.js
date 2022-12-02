@@ -90,7 +90,7 @@ const App = () => {
   <div onClick={()=>{setShowAnnotations(!showAnnotations)}}>set visible</div>
       <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setCurrentImage("https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg")}}> Another image</div>
     <div style={{border:"1px solid black", width:"fit-content"}} onClick={() =>{setBoxes(b2); setPage(page+1)}}> change boxes</div>
-      {/* {
+      {
         boxes && currentImage &&
         <AnnotationsEditor
           w={1700}
@@ -99,9 +99,10 @@ const App = () => {
           image={currentImage}
           showAnnotations={showAnnotations}
           // shapeStyle={style}
+          isEditable={false}
           OnTextChange={OnAnnotationsChanged}/>
-      } */}
-    {
+      }
+    {/* {
       boxes &&
 
       <AnnotationCanvas 
@@ -117,7 +118,7 @@ const App = () => {
       chosenStyle={chosenStyle}
       chosenAnnotations={[chosenAnnotation]}
       page_num={page}></AnnotationCanvas>
-    }
+    } */}
 
     {
       // boxes.map((box,i) =>{

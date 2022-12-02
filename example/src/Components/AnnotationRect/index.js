@@ -16,6 +16,7 @@ class AnnotationRect{
         this.confidenceFontSize = data?.style?.confidenceFontSize ?? 18
         this.showTextBoxBorder = true
         this.page_num = data?.annotation?.page_num
+        this.editable = data?.isEditable
         this.style = {
             stroke: data?.style?.stroke ?? this.calcBorderColor(this.confidence),
             fill : data?.style?.fill ?? "transparent",
@@ -59,7 +60,8 @@ class AnnotationRect{
             lockScalingY : true,
             backgroundColor: "white",
             visible : false,
-            type : 'textBox'
+            type : 'textBox',
+            editable : this.editable
         }
         
         this.confidenceOptions = {
