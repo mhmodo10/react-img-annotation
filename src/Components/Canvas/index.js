@@ -6,7 +6,7 @@ import TextInput from '../TextInput'
 import './style.css'
 const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, OnAnnotationsDelete, OnAnnotationSelect,
                             modifiedLabel, isSelectable, shapeStyle, chosenAnnotations, chosenStyle,
-                            activeAnnotation, highlightedAnnotation, page_num}) =>{
+                            activeAnnotation, highlightedAnnotation, page_num, isEditable = true}) =>{
     const [canvas,setCanvas] = useState()
     const [currentTooltip,setCurrentTooltip] = useState({label : "test", top : 0, left: 0})
     const [onHover,setOnHover] = useState(false)
@@ -60,6 +60,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
     },[OnAnnotationsChange])
 
     const OnButtonUp = (e) =>{
+        if(!isEditable){return}
         e.preventDefault()
         if(e.code === "KeyD" && selectedAnnotation){
             if(selectedAnnotation.get('type') === "textbox"){
@@ -91,6 +92,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
 
     //creates new rectangle
     const OnDoubleClick = (e) =>{
+        if(!isEditable){return}
         if(canvas.getActiveObjects()){
             var highest = 0
             canvas.getObjects().forEach((o, i) =>{
@@ -234,7 +236,7 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
             key : ann.key,
             page_num : pageIndex,
             canvas : canvas,
-            isSelectable : isSelectable ? true : false,
+            isSelectable : isEditable,
             style : shapeStyle,
             type : ann.type,
             text : ann.text ? ann.text : "",
