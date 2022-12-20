@@ -54,6 +54,9 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
     }
 
     const OnObjectDeselected = (e) =>{
+        if(e.deselcted === null){
+            return
+        }
         canvas.getObjects().forEach(o =>{
             if(o.data.key === e.deselected[0].data.key && o.type === "textBox"){
                 o.set('visible', false)

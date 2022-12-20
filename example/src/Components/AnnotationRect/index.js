@@ -110,8 +110,10 @@ class AnnotationRect{
         this.rect = new fabric.Rect(this.rectOptions)
         this.confidenceText = new fabric.Text(`${this.confidence ? this.confidence * 100 : 0}%`, this.confidenceOptions)
         this.group = new fabric.Group([this.confidenceText, this.rect], this.groupOptions)
-        this.canvas.add(this.textBox)
         this.canvas.add(this.group)
+        this.canvas.add(this.textBox)
+        this.group.moveTo(1)
+        this.textBox.moveTo(3)
         this.canvas.renderAll()
     }
     calcBorderColor(conf)
