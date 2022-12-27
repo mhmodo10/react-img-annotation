@@ -54,7 +54,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
     }
 
     const OnObjectDeselected = (e) =>{
-        if(e.deselcted === null){
+        if(!e.deselected || e.deselected.length === 0){
             return
         }
         canvas.getObjects().forEach(o =>{
