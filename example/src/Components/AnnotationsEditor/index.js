@@ -102,7 +102,6 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
 
     const OnCanvasScroll = (e) =>{
         if(e.e.altKey){
-            console.log(canvas.getZoom())
             e.e.preventDefault();
             var delta = e.e.deltaY;
             var zoom = canvas.getZoom();
