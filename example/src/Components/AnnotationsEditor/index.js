@@ -58,7 +58,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
                 if(o.data.key !== e.selected[0].data.key)
                 {
                     o.set('visible', false)
-                    o.exitEditing()
+                    // o.exitEditing()
                 }
             })
             canvas.getObjects().forEach(o =>{
@@ -118,7 +118,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
 
     const initListeners = () => {
         if(canvas){
-            canvas.on("text:changed", OnObjectChange)
+            canvas.on("text:editing:exited", OnObjectChange)
             canvas.on("selection:created",OnObjectSelected)
             canvas.on("selection:cleared",OnObjectDeselected)
             canvas.on("selection:updated",OnObjectSelected)
