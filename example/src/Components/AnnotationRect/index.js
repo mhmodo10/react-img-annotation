@@ -144,8 +144,8 @@ class AnnotationRect{
         this.canvas.add(this.labelText)
         this.canvas.add(this.rect)
         this.canvas.add(this.textBox)
-        this.rect.moveTo(0)
-        this.textBox.moveTo(10)
+        // this.rect.moveTo(1)
+        // this.textBox.moveTo(0)
         // this.group.moveTo(1)
         this.canvas.renderAll()
     }
@@ -156,8 +156,10 @@ class AnnotationRect{
         return `rgb(${r},${g},0)`
     }
     calcTextBoxFontSize(w,h,text){
-        const widthSize = (fabric.Textbox.prototype.fontSize - ((w) / (text.split('\n')[0].length)))
-        const heightSize = fabric.Textbox.prototype.fontSize - (h / (widthSize * text.split('\n').length))
+        let widthSize = (fabric.Textbox.prototype.fontSize - ((w) / (text.split('\n')[0].length)))
+        widthSize = widthSize < 12 ? 12 : widthSize
+        let heightSize = fabric.Textbox.prototype.fontSize - (h / (widthSize * text.split('\n').length))
+        heightSize = heightSize < 12 ? 12 : heightSize
         return ((widthSize + heightSize) / 2)
     }
     generateLabelText(groupName, fieldName, confidence){

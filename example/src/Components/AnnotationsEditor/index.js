@@ -142,7 +142,14 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
 
     const hideAnnotations = () =>{
         if(canvas){
-            canvas.getObjects('annotationGroup').forEach(o =>{
+            // canvas.getObjects('textBox').forEach(o =>{
+            //     o.set('visible', showAnnotations ?? true)
+            // })
+            canvas.discardActiveObject().renderAll()
+            canvas.getObjects('rect').forEach(o =>{
+                o.set('visible', showAnnotations ?? true)
+            })
+            canvas.getObjects('text').forEach(o =>{
                 o.set('visible', showAnnotations ?? true)
             })
             canvas.renderAll()
