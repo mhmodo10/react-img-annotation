@@ -42,6 +42,12 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
                 }
             }
             else {
+                // annotation.set({
+                //     'width' : annotation.width * annotation.scaleX,
+                //     'height' : annotation.height * annotation.scaleY,
+                //     'scaleX' : 1,
+                //     'scaleY' : 1
+                // })
                 return {
                     x : annotation.aCoords.tl.x,
                     y : annotation.aCoords.tl.y,
@@ -180,6 +186,16 @@ const AnnotationCanvas = ({ w, h, image, annotationsData, OnAnnotationsChange, O
         if(canvas) {
             canvas.setBackgroundImage(image,canvas.renderAll.bind(canvas))
             canvas.on('object:modified',OnObjectChanged)
+            canvas.on('object:scaling',() => {
+                canvas.getObjects().forEach(annotation => {
+                    annotation.set({
+                        'width' : annotation.width * annotation.scaleX,
+                        'height' : annotation.height * annotation.scaleY,
+                        'scaleX' : 1,
+                        'scaleY' : 1
+                    })
+                })
+            })
             canvas.on('object:removed',OnObjectRemoved)
             canvas.on('mouse:move',OnMouseOver)
             canvas.on('mouse:dblclick',OnDoubleClick)

@@ -20,9 +20,11 @@ const App = () => {
     y: 814,
     label: "box1",
     type : "RECT",
-    text: "first text",
+    text: "$250.00",
     confidence: 0.7,
-    page_num : 0
+    page_num : 0,
+    field_name : 'field 1',
+    parent : 'group 1'
   },
   {
     h: 46.601941747572816,
@@ -34,10 +36,64 @@ const App = () => {
     y: 870,
     label: "box1",
     type : "RECT",
-    text: "first text",
+    text: "$240.00",
     confidence: 0.7,
-    page_num : 0
-  },])
+    page_num : 0,
+    field_name : 'field 2',
+    parent : 'group1',
+  },
+  {
+    h : 50.476190476190474,
+    key : 2,
+    label : "box 2",
+    page_num : 0,
+    w : 636.2092014642164,
+    x : 281,
+    y : 812,
+    text : 'pellentesque habitant morbi trisique senectus',
+    field_name : 'field 3',
+    parent : 'group1',
+    confidence : 0.7,
+  },
+  {
+    "x": 282,
+    "y": 876,
+    "w": 645.7142857142858,
+    "h": 46.666666666666664,
+    "page_num": 0,
+    "key": 3,
+    "label": "box 3",
+    text : 'Et netus et malesuada fames ac turpis egestas',
+    field_name : 'field 4',
+    parent : 'group1',
+    confidence : 0.8
+},
+{
+  "x": 152,
+  "y": 424,
+  "w": 217.14285714285714,
+  "h": 217.14285714285714,
+  "page_num": 0,
+  "key": 4,
+  "label": "box 4",
+  text : 'BILL FROM\nJan\nBlocklab\nWestvest 183\nDelft\n00121319032',
+  field_name : 'field 4',
+  parent : 'group1',
+  confidence : 0.8
+},
+{
+  "x": 283,
+  "y": 934.3333740234375,
+  "w": 380.0001703882218,
+  "h": 48.09342385748789,
+  "page_num": 0,
+  "key": 5,
+  "label": "box 5",
+  text : 'Sed velit urna, interdum vel',
+  field_name : 'field 4aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  parent : 'group1',
+  confidence : 0.8
+}])
   const OnAnnotationSelected = (a) =>{
   }
   const OnAnnotationsChanged = (anns) =>{
@@ -76,10 +132,11 @@ const App = () => {
       label: "box3",
       type: "RECT",
       text : 'third text'
-    }
+    },
+
   ]
   const style = {
-    fill : "yellow",
+    fill : "transparent",
     stroke : "blue",
     borderColor : "green",
     cornerColor : "red",
@@ -113,7 +170,7 @@ const App = () => {
           image={currentImage}
           showAnnotations={showAnnotations}
           // shapeStyle={style}
-          isEditable={true}
+          isEditable={false}
           OnTextChange={OnAnnotationsChanged}/>
       }
     {/* {
