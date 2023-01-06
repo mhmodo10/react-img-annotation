@@ -61,7 +61,7 @@ class AnnotationRect{
             editingBorderColor: 'transparent',
             stroke : 'transparent',
             fill : "black",
-            fontSize : this.calcTextBoxFontSize(this.coords.width, this.coords.height, this.text),
+            // fontSize : this.calcTextBoxFontSize(this.coords.width, this.coords.height, this.text),
             // lineHeight: 1 / fabric.Textbox.prototype._fontSizeMult,
             textAlign : 'left',
             label: this.label,
@@ -145,6 +145,8 @@ class AnnotationRect{
         this.canvas.add(this.labelText)
         this.canvas.add(this.rect)
         this.canvas.add(this.textBox)
+        this.textBox.set('fontSize', this.calcTextBoxFontSize(this.w, this.h, this.textBox.width, this.textBox.height))
+
         // this.rect.moveTo(1)
         // this.textBox.moveTo(0)
         // this.group.moveTo(1)
@@ -156,12 +158,10 @@ class AnnotationRect{
         const r = (1 - conf) * 255
         return `rgb(${r},${g},0)`
     }
-    calcTextBoxFontSize(w,h,text){
-        let widthSize = (fabric.Textbox.prototype.fontSize - ((w) / (text.split('\n')[0].length)))
-        widthSize = widthSize < 12 ? 12 : widthSize
-        let heightSize = fabric.Textbox.prototype.fontSize - (h / (widthSize * text.split('\n').length))
-        heightSize = heightSize < 12 ? 12 : heightSize
-        return ((widthSize + heightSize) / 2)
+    calcTextBoxFontSize(w,h, refWidth, refHeight){
+        const fontWidth = 35 * (w / refWidth)
+        const fontHeight = 35 * (h / refHeight)
+        return (fontWidth + fontHeight) / 2
     }
     generateLabelText(groupName, fieldName, confidence){
         groupName = this.truncateText(groupName, 11)
@@ -180,7 +180,7 @@ class AnnotationRect{
         let textBottomLeftY = y + h
         return {
             left : x + strokeWidth,
-            top : y + (fontSize / 4),
+            top : y + (fontSize / 5),
             width : w - (strokeWidth * 2),
             fixedWidth : w,
             height : h
