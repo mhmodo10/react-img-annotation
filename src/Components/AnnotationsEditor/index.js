@@ -31,6 +31,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
     }
     
     const OnObjectChange = (e) => {
+        if(e.target.data.text === e.target.text){ return }
         let updatedAnn = {
             ...e.target.data,
             text : e.target.text
@@ -49,26 +50,13 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
             //         })
             //     }
             // })
-            canvas.getObjects('rect').forEach(o => {
-                if(o.data.key !== e.selected[0].data.key){
-                    o.set('fill', 'transparent')
-                }
-            })
-            canvas.getObjects("textBox").forEach(o =>{
-                if(o.data.key !== e.selected[0].data.key)
-                {
-                    o.set('visible', false)
-                    // o.exitEditing()
-                }
-            })
-            canvas.getObjects().forEach(o =>{
-                if(o.data.key === e.selected[0].data.key && o.type === "textBox"){
+            canvas.getObjects('textBox').forEach(o =>{
+                if(o.data.key === e.selected[0].data.key){
                     canvas.setActiveObject(o)
-                    o.bringToFront()
                     o.set('visible', true)
-                    o.set('selectionStart', o.text.length)
-                    o.set('selectionEnd', o.text.length)
-                    o.enterEditing()
+                }
+                else{
+                    o.set('visible',false)
                 }
             })
         }
@@ -87,15 +75,9 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
         //         })
         //     }
         // })
-        canvas.getObjects('rect').forEach(o => {
-            if(o.data.key !== e.deselected[0].data.key){
-                o.set('fill', 'transparent')
-            }
-        })
         canvas.getObjects().forEach(o =>{
             if(o.data.key === e.deselected[0].data.key && o.type === "textBox"){
                 o.set('visible', false)
-                o.exitEditing()
             }
         })
     }
@@ -118,18 +100,19 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
 
     const initListeners = () => {
         if(canvas){
-            canvas.on("text:editing:exited", OnObjectChange)
+            canvas.on("object:modified", OnObjectChange)
             canvas.on("selection:created",OnObjectSelected)
             canvas.on("selection:cleared",OnObjectDeselected)
             canvas.on("selection:updated",OnObjectSelected)
             canvas.on('mouse:wheel',OnCanvasScroll,{passive : true})
-            canvas.on('text:changed', function(opt) {
-                var t1 = opt.target;
-                if (t1.width > t1.fixedWidth) {
-                  t1.fontSize *= t1.fixedWidth / (t1.width + 1);
-                  t1.width = t1.fixedWidth;
-                }
-              });
+
+            // canvas.on('text:changed', function(opt) {
+            //     var t1 = opt.target;
+            //     if (t1.width > t1.fixedWidth) {
+            //       t1.fontSize *= t1.fixedWidth / (t1.width + 1);
+            //       t1.width = t1.fixedWidth;
+            //     }
+            //   });
         }
     }
 
