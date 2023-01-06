@@ -19,6 +19,7 @@ class AnnotationRect{
         this.showTextBoxBorder = true
         this.page_num = data?.annotation?.page_num
         this.editable = data?.isEditable
+        this.labelColor = data?.style?.labelColor ?? 'black'
         this.style = {
             stroke: data?.style?.stroke ?? this.calcBorderColor(this.confidence),
             fill : data?.style?.fill ?? "transparent",
@@ -96,7 +97,7 @@ class AnnotationRect{
             fontSize : this.confidenceFontSize,
             stroke : 'transparent',
             backgroundColor : this.calcBorderColor(this.confidence),
-            fill : 'white',
+            fill : this.labelColor,
             textAlign : 'center',
             editable : false
         }
