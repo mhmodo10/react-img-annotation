@@ -57,16 +57,15 @@ class AnnotationRect{
         this.textBoxOptions = {
             ...this.commonOptions,
             ...this.coords,
+            borderColor : this.calcBorderColor(this.confidence),
             objectCaching: false,
-            editingBorderColor: 'transparent',
+            editingBorderColor: this.calcBorderColor(this.confidence),
             stroke : 'transparent',
             fill : "black",
-            // fontSize : this.calcTextBoxFontSize(this.coords.width, this.coords.height, this.text),
-            // lineHeight: 1 / fabric.Textbox.prototype._fontSizeMult,
+            fontSize : 20,
             textAlign : 'left',
             label: this.label,
-            // lockScalingY : true,
-            backgroundColor: "#F5FEFD",
+            backgroundColor: "white",
             visible : false,
             type : 'textBox',
             editable : this.editable,
@@ -74,8 +73,6 @@ class AnnotationRect{
             selectionStart : this.text.length,
             selectionEnd : this.text.length,
             splitByGrapheme : true,
-            // fontWeight : 'bold',
-            borderColor : 'transparent',
             rx : 5,
         }
         
@@ -93,13 +90,13 @@ class AnnotationRect{
             left : this.x,
             top : this.y - this.confidenceFontSize - this.style.strokeWidth,
             width : this.w,
-            // splitByGrapheme : true,
             fontSize : this.confidenceFontSize,
             stroke : 'transparent',
             backgroundColor : this.calcBorderColor(this.confidence),
             fill : this.labelColor,
             textAlign : 'center',
-            editable : false
+            editable : false,
+            type : 'boxLabel'
         }
         this.groupOptions = {
             ...this.commonOptions,
@@ -109,7 +106,15 @@ class AnnotationRect{
             subTargetCheck : true,
             type : "annotationGroup"
         }
-
+        this.verticalBarOptions = {
+            ...this.commonOptions,
+            top : this.y - this.confidenceFontSize - this.style.strokeWidth,
+            left : this.x - 10,
+            width : 2,
+            fill : this.calcBorderColor(this.confidence),
+            type : 'verticalBar',
+            visible : false
+        }
         var originalRender = fabric.Textbox.prototype._render;
             fabric.Textbox.prototype._render = function(ctx) {
             originalRender.call(this, ctx);
@@ -137,19 +142,15 @@ class AnnotationRect{
 
         this.textBox = new fabric.Textbox(this.text, this.textBoxOptions)
         this.rect = new fabric.Rect(this.rectOptions)
-        // this.confidenceText = new fabric.Text(`${this.confidence ? this.confidence * 100 : 0}%`, this.confidenceOptions)
+        this.verticalBar = new fabric.Rect(this.verticalBarOptions)
         this.labelText = new fabric.Text(this.generateLabelText(this.parent, this.field_name, this.confidence), this.labelOptions)
-        // this.group = new fabric.Group([this.confidenceText, this.labelText, this.rect], this.groupOptions)
-        // this.canvas.add(this.group)
-        // this.canvas.add(this.confidenceText)
+
         this.canvas.add(this.labelText)
         this.canvas.add(this.rect)
         this.canvas.add(this.textBox)
-        this.textBox.set('fontSize', this.calcTextBoxFontSize(this.w, this.h, this.textBox.width, this.textBox.height))
-
-        // this.rect.moveTo(1)
-        // this.textBox.moveTo(0)
-        // this.group.moveTo(1)
+        this.canvas.add(this.verticalBar)
+        this.verticalBar.set('height', this.rect.height + this.textBox.height + this.labelText.height + (this.textBox.fontSize / 5))
+        this.labelText.bringToFront()
         this.canvas.renderAll()
     }
     calcBorderColor(conf)
@@ -180,7 +181,7 @@ class AnnotationRect{
         let textBottomLeftY = y + h
         return {
             left : x + strokeWidth,
-            top : y + (fontSize / 5),
+            top : y + h + (fontSize / 5),
             width : w - (strokeWidth * 2),
             fixedWidth : w,
             height : h

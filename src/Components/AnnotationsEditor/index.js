@@ -42,21 +42,28 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
 
     const OnObjectSelected = (e) =>{
         if((e.selected[0].type === "rect" || e.selected[0].type === 'textBox') && isEditable){
-            // canvas.getObjects('annotationGroup').forEach(o => {
-            //     if(o.data.key !== e.selected[0].data.key){
-            //         o._objects.map(i => {
-            //             if(i.type === 'rect')
-            //                 i.set('fill', 'transparent')
-            //         })
-            //     }
-            // })
-            canvas.getObjects('textBox').forEach(o =>{
-                if(o.data.key === e.selected[0].data.key){
+            const handleSelect = {
+                'rect' : (o) => {},
+                'textBox' : (o) => {                     
                     canvas.setActiveObject(o)
-                    o.set('visible', true)
+                    o.bringToFront()
+                    o.set('visible', true)},
+                'verticalBar' : (o) => { o.set('visible', true) },
+                'boxLabel' : (o) => {}
+            }
+    
+            const handleOther = {
+                'rect' : (o) => { o.set('visible', false) },
+                'boxLabel' : (o) => { o.set('visible', false) },
+                'verticalBar' : (o) => { o.set('visible', false) },
+                'textBox' : (o) => {o.set('visible',false)}
+            }
+            canvas.getObjects().forEach(o => {
+                if(o.data.key === e.selected[0].data.key){
+                    handleSelect[o.type](o)
                 }
                 else{
-                    o.set('visible',false)
+                    handleOther[o.type](o)
                 }
             })
         }
@@ -67,21 +74,39 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
         if(!e.deselected || e.deselected.length === 0){
             return
         }
-        // canvas.getObjects('annotationGroup').forEach(o => {
-        //     if(o.data.key === e.deselected[0].data.key){
-        //         o._objects.map(i => {
-        //             if(i.type === 'rect')
-        //                 i.set('fill', 'transparent')
-        //         })
-        //     }
-        // })
+
+        const handleDeselect = {
+            'rect' : (o) => {},
+            'textBox' : (o) => { o.set('visible', false) },
+            'verticalBar' : (o) => { o.set('visible', false) },
+            'boxLabel' : (o) => {}
+        }
+
+        const handleOther = {
+            'rect' : (o) => { o.set('visible', true) },
+            'boxLabel' : (o) => { o.set('visible', true) },
+            'verticalBar' : (o) => {},
+            'textBox' : (o) => {}
+        }
+
         canvas.getObjects().forEach(o =>{
-            if(o.data.key === e.deselected[0].data.key && o.type === "textBox"){
-                o.set('visible', false)
+            if(o.data.key === e.deselected[0].data.key){
+                handleDeselect[o.type](o)
+            }
+            else {
+                handleOther[o.type](o)
             }
         })
     }
 
+    const OnTextEdited = (e) => {
+        const targetRect = canvas.getObjects('rect').find(r => e.target.data.key === r.data.key)
+        const targetLabel = canvas.getObjects('boxLabel').find(r => e.target.data.key === r.data.key)
+        const targetBar = canvas.getObjects('verticalBar').find(vb => e.target.data.key === vb.data.key)
+        if(targetBar){
+            targetBar.set('height', targetRect.height + e.target.height + targetLabel.height + (e.target.fontSize / 5))
+        }
+    }
     const OnCanvasScroll = (e) =>{
         if(e.e.altKey){
             e.e.preventDefault();
@@ -105,14 +130,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
             canvas.on("selection:cleared",OnObjectDeselected)
             canvas.on("selection:updated",OnObjectSelected)
             canvas.on('mouse:wheel',OnCanvasScroll,{passive : true})
-
-            // canvas.on('text:changed', function(opt) {
-            //     var t1 = opt.target;
-            //     if (t1.width > t1.fixedWidth) {
-            //       t1.fontSize *= t1.fixedWidth / (t1.width + 1);
-            //       t1.width = t1.fixedWidth;
-            //     }
-            //   });
+            canvas.on('text:changed', OnTextEdited);
         }
     }
 
