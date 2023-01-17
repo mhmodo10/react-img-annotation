@@ -41,7 +41,7 @@ const AnnotationsEditor = ({w, h, image, annotationsData, OnTextChange, shapeSty
     }
 
     const OnObjectSelected = (e) =>{
-        if((e.selected[0].type === "rect" || e.selected[0].type === 'textBox') && isEditable){
+        if((e.selected[0].type === "rect" || e.selected[0].type === 'textBox')){
             const handleSelect = {
                 'rect' : (o) => {},
                 'textBox' : (o) => {                     

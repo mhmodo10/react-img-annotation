@@ -270,7 +270,7 @@ const App = () => {
           image={currentImage}
           showAnnotations={showAnnotations}
           // shapeStyle={style}
-          isEditable={true}
+          isEditable={false}
           OnTextChange={OnAnnotationsChanged}/>
       }
     {/* {
