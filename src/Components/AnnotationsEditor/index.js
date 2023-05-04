@@ -8,7 +8,6 @@ const AnnotationsEditor = ({
   annotationsData,
   OnTextChange,
   shapeStyle,
-  page_num,
   showAnnotations,
   isEditable = true,
   viewTextBox = true
@@ -16,11 +15,11 @@ const AnnotationsEditor = ({
   const [canvas, setCanvas] = useState()
   const initCanvas = () => {
     if (!canvas) {
-      let temp_canvas = new fabric.Canvas('c', {
+      const tempCanvas = new fabric.Canvas('c', {
         passive: true,
         selection: false
       })
-      setCanvas(temp_canvas)
+      setCanvas(tempCanvas)
     }
   }
 
@@ -37,19 +36,20 @@ const AnnotationsEditor = ({
       }, new Map())
       annotationsData
         .reduce((acc, curr) => {
-          if (!!acc.find((ann) => ann.key === curr.key)) {
+          if (acc.find((ann) => ann.key === curr.key)) {
             return acc
           }
           return [...acc, curr]
         }, [])
         .forEach((annotation) => {
-          let data = {
+          const data = {
             sameKeyAnnotations: groupedAnnotations.get(annotation.key),
             annotation,
             canvas: canvas,
             style: shapeStyle,
             isEditable
           }
+          // eslint-disable-next-line no-new
           new AnnotationRect(data)
         })
     }
@@ -88,7 +88,7 @@ const AnnotationsEditor = ({
       if (e.target.data.text === e.target.text) {
         return
       }
-      let updatedAnn = {
+      const updatedAnn = {
         ...e.target.data,
         text: e.target.text
       }
@@ -228,7 +228,7 @@ const AnnotationsEditor = ({
 
   return (
     <div>
-      <canvas id='c' width={w} height={h}></canvas>
+      <canvas id='c' width={w} height={h} />
     </div>
   )
 }
