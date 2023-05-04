@@ -23,8 +23,8 @@ class TextInput{
             objectCaching: false,
             stroke: 'transparent',
             fill : "black",
-            fontSize : data.fontSize ? data.fontSize : 20,
-            strokeWidth: data?.style?.strokeWidth ? data?.style?.strokeWidth :2,
+            fontSize : data.fontSize ? data.fontSize : 8,
+            strokeWidth: data.style.strokeWidth ? data.style.strokeWidth :2,
             label: this.label,
             data : {
                 key : data.key,
@@ -32,11 +32,11 @@ class TextInput{
             },
             showTextBoxBorder: true,
             lockScalingY : true,
-            borderColor: data?.style?.borderColor ? data?.style?.borderColor : 'red',
-            cornerColor: data?.style?.cornerColor ? data?.style?.cornerColor : 'green',
-            cornerSize: data?.style?.cornerSize ? data?.style?.cornerSize :6,
-            transparentCorners: data?.style?.transparentCorners ? data?.style?.transparentCorners :false,
-            selectable : data?.isSelectable ?? true,
+            borderColor: data.style.borderColor ? data.style.borderColor : 'red',
+            cornerColor: data.style.cornerColor ? data.style.cornerColor : 'green',
+            cornerSize: data.style.cornerSize ? data.style.cornerSize :6,
+            transparentCorners: data.style.transparentCorners ? data.style.transparentCorners :false,
+            selectable : data.isSelectable,
         }
         var originalRender = fabric.Textbox.prototype._render;
         fabric.Textbox.prototype._render = function(ctx) {

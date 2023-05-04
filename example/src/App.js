@@ -83,6 +83,19 @@ const App = () => {
   confidence : 0.8
 },
 {
+  "x": 152,
+  "y": 424,
+  "w": 317.14285714285714,
+  "h": 317.14285714285714,
+  "page_num": 0,
+  "key": 4,
+  "label": "box 4",
+  text : 'BILL FROM\nJan\nBlocklab\nWestvest 183\nDelft\n00121319032',
+  field_name : 'field 49',
+  parent : 'group1',
+  confidence : 0.8
+},
+{
   "x": 283,
   "y": 934.3333740234375,
   "w": 380.0001703882218,
@@ -271,7 +284,8 @@ const App = () => {
           showAnnotations={showAnnotations}
           // shapeStyle={style}
           isEditable={false}
-          OnTextChange={OnAnnotationsChanged}/>
+          OnTextChange={OnAnnotationsChanged}
+          viewTextBox={false}/>
       }
     {/* {
       boxes &&

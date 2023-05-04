@@ -10,7 +10,8 @@ const AnnotationsEditor = ({
   shapeStyle,
   page_num,
   showAnnotations,
-  isEditable = true
+  isEditable = true,
+  viewTextBox = true
 }) => {
   const [canvas, setCanvas] = useState()
   const initCanvas = () => {
@@ -28,15 +29,29 @@ const AnnotationsEditor = ({
       canvas.getObjects().forEach((o) => {
         canvas.remove(o)
       })
-      annotationsData.forEach((annotation) => {
-        let data = {
-          annotation,
-          canvas: canvas,
-          style: shapeStyle,
-          isEditable
+      const groupedAnnotations = annotationsData.reduce((acc, curr) => {
+        if (acc.has(curr?.key)) {
+          return acc.set(curr?.key, [...acc.get(curr?.key), curr])
         }
-        new AnnotationRect(data)
-      })
+        return acc.set(curr?.key, [curr])
+      }, new Map())
+      annotationsData
+        .reduce((acc, curr) => {
+          if (!!acc.find((ann) => ann.key === curr.key)) {
+            return acc
+          }
+          return [...acc, curr]
+        }, [])
+        .forEach((annotation) => {
+          let data = {
+            sameKeyAnnotations: groupedAnnotations.get(annotation.key),
+            annotation,
+            canvas: canvas,
+            style: shapeStyle,
+            isEditable
+          }
+          new AnnotationRect(data)
+        })
     }
   }
 
@@ -85,11 +100,13 @@ const AnnotationsEditor = ({
         const handleSelect = {
           rect: (o) => {},
           textBox: (o) => {
+            if (!viewTextBox) return
             canvas.setActiveObject(o)
             o.bringToFront()
             o.set('visible', true)
           },
           verticalBar: (o) => {
+            if (!viewTextBox) return
             o.set('visible', true)
           },
           boxLabel: (o) => {}
