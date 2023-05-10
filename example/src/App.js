@@ -207,6 +207,7 @@ const App = () => {
   // }
 ])
   const OnAnnotationSelected = (a) =>{
+    console.log(a)
   }
   const OnAnnotationsChanged = (anns) =>{
     console.log('change',anns)

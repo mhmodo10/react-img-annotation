@@ -34,7 +34,7 @@ const AnnotationCanvas = ({
 
   // find target in array
   const isInArray = (target, arr) => {
-    const match = arr.filter((ann) => ann.key === target.key)
+    const match = arr.filter((ann) => ann.box_id === target.box_id)
     return match.length > 0
   }
   const createObject = (type, data) => {
@@ -185,7 +185,7 @@ const AnnotationCanvas = ({
     setCanvasAnnotations((canvasAnnotations) =>
       canvasAnnotations.filter(
         (canvasAnnotation) =>
-          canvasAnnotation.shape.data.key !== e.target.data.key &&
+          canvasAnnotation.shape.data.box_id !== e.target.data.box_id &&
           canvasAnnotation.shape.data.page_num !== e.target.data.page_num
       )
     )
@@ -203,7 +203,7 @@ const AnnotationCanvas = ({
   const higlightObject = () => {
     if (highlightedAnnotation) {
       canvasAnnotations.forEach((ann) => {
-        if (ann.key === highlightedAnnotation.key) {
+        if (ann.box_id === highlightedAnnotation.box_id) {
           ann.setStyle({ style: chosenStyle })
         } else {
           ann.setStyle({ style: shapeStyle })
@@ -221,7 +221,8 @@ const AnnotationCanvas = ({
         w: e.selected[0].width * e.selected[0].scaleX,
         h: e.selected[0].height * e.selected[0].scaleY,
         key: e.selected[0].data.key,
-        label: e.selected[0].data.label
+        label: e.selected[0].data.label,
+        box_id: e.selected[0].data.box_id
       }
       setSelectedAnnotation(e.selected[0])
       OnAnnotationSelect(annotation)
@@ -281,13 +282,13 @@ const AnnotationCanvas = ({
   const updateLabel = () => {
     if (modifiedLabel) {
       canvasAnnotations.forEach((canvasAnnotation, i) => {
-        if (canvasAnnotation.shape.data.key === modifiedLabel.key) {
+        if (canvasAnnotation.shape.data.box_id === modifiedLabel.box_id) {
           canvasAnnotation.shape.data.label = modifiedLabel.label
         }
       })
       OnBoxesChange(
         annotationsData.map((annotation, i) => {
-          if (annotation.key === modifiedLabel.key) {
+          if (annotation.box_id === modifiedLabel.box_id) {
             return { ...annotation, label: modifiedLabel.label }
           }
           return annotation
@@ -313,7 +314,7 @@ const AnnotationCanvas = ({
   const activateObjects = () => {
     if (canvas && activeAnnotation) {
       canvas.getObjects().forEach((o) => {
-        if (o.data.key === activeAnnotation.key) {
+        if (o.data.box_id === activeAnnotation.box_id) {
           canvas.setActiveObject(o)
         }
       })
@@ -332,7 +333,7 @@ const AnnotationCanvas = ({
   const updateChosenAnnotations = () => {
     if (chosenStyle && canvas && chosenAnnotations) {
       canvas.getObjects('defaultRect').forEach((o) => {
-        const match = chosenAnnotations.filter((ann) => ann.key === o.data.key)
+        const match = chosenAnnotations.filter((ann) => ann.box_id === o.data.box_id)
         if (match.length > 0) o.objectClass.setStyle(chosenStyle)
         else o.objectClass.setStyle(shapeStyle)
       })
