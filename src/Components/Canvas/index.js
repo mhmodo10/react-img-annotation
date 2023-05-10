@@ -18,7 +18,7 @@ const AnnotationCanvas = ({
   chosenStyle,
   activeAnnotation,
   highlightedAnnotation,
-  page_num: pageNum,
+  page_num,
   isEditable = true
 }) => {
   const [canvas, setCanvas] = useState()
@@ -30,7 +30,7 @@ const AnnotationCanvas = ({
   const [onHover, setOnHover] = useState(false)
   const [canvasAnnotations, setCanvasAnnotations] = useState([])
   const [selectedAnnotation, setSelectedAnnotation] = useState(null)
-  const [currentPageNum, setCurrentPageNum] = useState(pageNum)
+  const [currentPageNum, setCurrentPageNum] = useState(page_num)
 
   // find target in array
   const isInArray = (target, arr) => {
@@ -137,7 +137,14 @@ const AnnotationCanvas = ({
       return
     }
     if (canvas.getActiveObjects()) {
-      const key = new Date().getTime()
+      let highest = 0
+      canvas.getObjects().forEach((o, i) => {
+        if (highest < o.data.key) {
+          highest = o.data.key
+        }
+      })
+      const key = highest + 1
+      const box_id = new Date().getTime()
       const data = {
         x: e.pointer.x,
         y: e.pointer.y,
@@ -149,7 +156,8 @@ const AnnotationCanvas = ({
         canvas: canvas,
         type: 'RECT',
         isSelectable: !!isSelectable,
-        style: shapeStyle
+        style: shapeStyle,
+        box_id: box_id
       }
       const rect = createObject(data.type, data)
       setCanvasAnnotations((canvasAnnotations) => [...canvasAnnotations, rect])
@@ -357,8 +365,8 @@ const AnnotationCanvas = ({
   useEffect(updateChosenAnnotations, [chosenAnnotations, canvas])
 
   useEffect(() => {
-    setCurrentPageNum(pageNum)
-  }, [pageNum])
+    setCurrentPageNum(page_num)
+  }, [page_num])
 
   useEffect(() => {
     if (!canvas && w && h) {
