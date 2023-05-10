@@ -209,7 +209,7 @@ const App = () => {
   const OnAnnotationSelected = (a) =>{
   }
   const OnAnnotationsChanged = (anns) =>{
-    console.log(anns)
+    console.log('change',anns)
     // setBoxes(anns)
   }
   const OnInputChange = (e) =>{
