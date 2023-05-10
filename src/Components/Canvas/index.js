@@ -299,19 +299,13 @@ const AnnotationCanvas = ({
   // returns annotation data object
   const getAnnotationData = (ann, pageIndex) => {
     return {
-      x: ann.x,
-      y: ann.y,
-      w: ann.w,
-      h: ann.h,
-      label: ann.label,
-      key: ann.key,
+      ...ann,
+      text: ann.text ? ann.text : '',
+      fontSize: ann.fontSize ? ann.fontSize : 8,
       page_num: pageIndex,
       canvas: canvas,
       isSelectable: isEditable,
-      style: shapeStyle,
-      type: ann.type,
-      text: ann.text ? ann.text : '',
-      fontSize: ann.fontSize ? ann.fontSize : 8
+      style: shapeStyle
     }
   }
 
