@@ -150,7 +150,7 @@ const AnnotationCanvas = ({
         y: e.pointer.y,
         w: 100,
         h: 100,
-        label: `box ${annotationsData.length}`,
+        label: `box ${key}`,
         page_num: canvas.page_num,
         key: key,
         canvas: canvas,
