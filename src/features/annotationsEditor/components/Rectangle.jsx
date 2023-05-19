@@ -11,20 +11,23 @@ const Rectangle = ({
   onDelete,
   transformerProps,
   onFieldSelectChange,
-  options,
-  selectedOptions,
-  disabledOptions,
+  options = [],
+  selectedOptions = [],
+  disabledOptions = [],
+  canvasWidth,
+  canvasHeight,
 }) => {
   const shapeRef = useRef();
   const trRef = useRef();
   const [currentPos, setCurrentPos] = useState({
-    x: shapeProps.x ?? 0,
-    y: shapeProps.y ?? 0,
-    w: shapeProps.width ?? 100,
-    h: shapeProps.height ?? 100,
+    x: shapeProps.x,
+    y: shapeProps.y,
+    w: shapeProps.width,
+    h: shapeProps.height,
   });
   const [showInteractions, setShowInteractions] = useState(true);
   const [showFieldsMenu, setShowFieldsMenu] = useState(false);
+  const [_selectedOptions, setSelectedOptions] = useState(selectedOptions);
   const toggleFieldsMenu = () =>
     setShowFieldsMenu((showFieldsMenu) => !showFieldsMenu);
   useEffect(() => {
@@ -38,13 +41,87 @@ const Rectangle = ({
   }, [isSelected]);
 
   const handleDelete = () => {
+    setShowFieldsMenu(false);
+    setShowInteractions(false);
     if (!onDelete) return;
     onDelete(shapeProps.id);
   };
 
-  const handleFieldSelectChange = (selectedFields) => {
+  const handleFieldSelectChange = (option) => {
+    console.log(_selectedOptions);
+    const isSelected = _selectedOptions.find((o) => o.value === option.value);
+    let tempSelectedOptions = structuredClone(_selectedOptions);
+    if (isSelected) {
+      tempSelectedOptions = _selectedOptions.filter(
+        (o) => o.value !== option.value
+      );
+    } else {
+      tempSelectedOptions = [...tempSelectedOptions, option];
+    }
+    setSelectedOptions(tempSelectedOptions);
     if (onFieldSelectChange)
-      onFieldSelectChange({ boxId: shapeProps.id, selectedFields });
+      onFieldSelectChange({ boxId: shapeProps.id, tempSelectedOptions });
+  };
+  const outOfBounds = (coords, maxWidth, maxHeight) => {
+    const { x, y, width, height } = coords;
+    if (x - 1 <= 0 && y - 1 <= 0) {
+      return "topLeft";
+    }
+    if (x + width >= maxWidth - 1 && y + height >= maxHeight - 1) {
+      return "bottomRight";
+    }
+    if (x + width >= maxWidth - 1 && y - 1 <= 0) {
+      return "topRight";
+    }
+    if (x - 1 <= 0 && y + height >= maxHeight - 1) {
+      return "bottomLeft";
+    }
+    if (x - 1 <= 0) {
+      return "left";
+    }
+    if (y - 1 <= 0) {
+      return "top";
+    }
+    if (x + width >= maxWidth - 1) {
+      return "right";
+    }
+    if (y + height >= maxHeight - 1) {
+      return "bottom";
+    }
+  };
+  const restrictRect = (e) => {
+    switch (outOfBounds(e.target.attrs, canvasWidth, canvasHeight)) {
+      case "left":
+        shapeRef.current.x(2);
+        break;
+      case "right":
+        shapeRef.current.x(canvasWidth - shapeProps.width - 2);
+        break;
+      case "top":
+        shapeRef.current.y(2);
+        break;
+      case "bottom":
+        shapeRef.current.y(canvasHeight - shapeProps.height - 2);
+        break;
+      case "topLeft":
+        shapeRef.current.x(2);
+        shapeRef.current.y(2);
+        break;
+      case "topRight":
+        shapeRef.current.x(canvasWidth - shapeProps.width - 2);
+        shapeRef.current.y(2);
+        break;
+      case "bottomLeft":
+        shapeRef.current.x(2);
+        shapeRef.current.y(canvasHeight - shapeProps.height - 2);
+        break;
+      case "bottomRight":
+        shapeRef.current.x(canvasWidth - shapeProps.width - 2);
+        shapeRef.current.y(canvasHeight - shapeProps.height - 2);
+        break;
+      default:
+        break;
+    }
   };
   return (
     <React.Fragment>
@@ -55,6 +132,7 @@ const Rectangle = ({
         {...shapeProps}
         draggable
         onDragMove={(e) => {
+          restrictRect(e);
           setShowInteractions(false);
           setCurrentPos({
             x: e.target.attrs.x,
@@ -120,10 +198,12 @@ const Rectangle = ({
               }}
             >
               <Select
+                key={shapeProps.id}
                 options={options}
-                selectedOptions={selectedOptions}
+                selectedOptions={_selectedOptions}
                 disabledOptions={disabledOptions}
                 onChange={handleFieldSelectChange}
+                placeholder={"No selected fields."}
               />
             </div>
           )}

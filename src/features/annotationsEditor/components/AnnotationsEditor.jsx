@@ -72,6 +72,10 @@ const AnnotationsEditor = ({
     setAnnotations((_annotations) =>
       _annotations.filter((annotation) => annotation.id !== deletedId)
     );
+    if (deletedId === selectedShape.id) {
+      console.log("reset selection");
+      setSelectedShape(null);
+    }
     if (onDeleteAnnotation) {
       onDeleteAnnotation(deletedId);
     }
@@ -98,7 +102,7 @@ const AnnotationsEditor = ({
         <Image image={backgroundImage} ref={imageRef} />
       </Layer>
       <Layer>
-        {_annotations.map((annotation, i) => {
+        {_annotations.map((annotation) => {
           const selectedOptionsIds = boxFields.find(
             (box) => box.boxId === annotation.id
           )?.fieldIds;
@@ -116,11 +120,11 @@ const AnnotationsEditor = ({
           };
           return (
             <Rectangle
-              key={i}
+              key={shapeProps.id}
               shapeProps={shapeProps}
-              isSelected={annotation.id === selectedShape?.id}
+              isSelected={shapeProps.id === selectedShape?.id}
               onSelect={() => {
-                setSelectedShape(annotation);
+                setSelectedShape(shapeProps);
               }}
               onChange={handleAnnotationChange}
               onDelete={handleDeleteAnnotation}
@@ -128,6 +132,9 @@ const AnnotationsEditor = ({
               options={options}
               selectedOptions={selectedOptionsIds}
               disabledOptions={disabledOptionsIds}
+              onFieldSelectChange={handleFieldSelectChange}
+              canvasWidth={backgroundImage.width}
+              canvasHeight={backgroundImage.height}
             />
           );
         })}
