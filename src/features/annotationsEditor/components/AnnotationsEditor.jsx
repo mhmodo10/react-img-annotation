@@ -22,8 +22,10 @@ const AnnotationsEditor = ({
   onFieldSelectChange,
   options = [],
   boxFields = [], // this is an array of objects, each object has box id and options list
-  highlightedAnnotations,
+  highlightedAnnotations = [],
   image,
+  width = 1000,
+  height = 1000,
 }) => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [_annotations, setAnnotations] = useState(annotations ?? []);
@@ -89,8 +91,8 @@ const AnnotationsEditor = ({
   }, [_annotations]);
   return (
     <Stage
-      width={backgroundImage.width}
-      height={backgroundImage.height}
+      width={width}
+      height={height}
       onMouseDown={checkDeselect}
       onTouchStart={checkDeselect}
       onDblClick={addNewAnnotation}
