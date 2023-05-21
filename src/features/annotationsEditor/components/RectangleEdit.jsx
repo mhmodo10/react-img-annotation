@@ -3,7 +3,7 @@ import { Rect, Transformer } from "react-konva";
 import { Html } from "react-konva-utils";
 import { RiDeleteBin6Line, RiMenuFill } from "react-icons/ri";
 import Select from "../../fieldsSelect/components/Select";
-const Rectangle = ({
+const RectangleEdit = ({
   shapeProps,
   isSelected,
   onSelect,
@@ -62,35 +62,33 @@ const Rectangle = ({
     if (onFieldSelectChange)
       onFieldSelectChange({ boxId: shapeProps.id, tempSelectedOptions });
   };
-  const outOfBounds = (coords, maxWidth, maxHeight) => {
+  const outOfBounds = (
+    coords,
+    maxWidth,
+    maxHeight,
+    verticalOffset = 0,
+    horizontalOffset = 0
+  ) => {
     const { x, y, width, height } = coords;
-    if (x - 1 <= 0 && y - 1 <= 0) {
-      return "topLeft";
+    let xBounds = "";
+    let yBounds = "";
+    if (x - horizontalOffset - 1 <= 0) {
+      xBounds = "left";
     }
-    if (x + width >= maxWidth - 1 && y + height >= maxHeight - 1) {
-      return "bottomRight";
+    if (y - verticalOffset - 1 <= 0) {
+      yBounds = "top";
     }
-    if (x + width >= maxWidth - 1 && y - 1 <= 0) {
-      return "topRight";
+    if (x + horizontalOffset + width >= maxWidth - 1) {
+      xBounds = "right";
     }
-    if (x - 1 <= 0 && y + height >= maxHeight - 1) {
-      return "bottomLeft";
+    if (y + verticalOffset + height >= maxHeight - 1) {
+      yBounds = "bottom";
     }
-    if (x - 1 <= 0) {
-      return "left";
-    }
-    if (y - 1 <= 0) {
-      return "top";
-    }
-    if (x + width >= maxWidth - 1) {
-      return "right";
-    }
-    if (y + height >= maxHeight - 1) {
-      return "bottom";
-    }
+    return yBounds + xBounds;
   };
   const restrictRect = (e) => {
-    switch (outOfBounds(e.target.attrs, canvasWidth, canvasHeight)) {
+    const bounds = outOfBounds(e.target.attrs, canvasWidth, canvasHeight);
+    switch (bounds) {
       case "left":
         shapeRef.current.x(2);
         break;
@@ -103,19 +101,19 @@ const Rectangle = ({
       case "bottom":
         shapeRef.current.y(canvasHeight - shapeProps.height - 2);
         break;
-      case "topLeft":
+      case "topleft":
         shapeRef.current.x(2);
         shapeRef.current.y(2);
         break;
-      case "topRight":
+      case "topright":
         shapeRef.current.x(canvasWidth - shapeProps.width - 2);
         shapeRef.current.y(2);
         break;
-      case "bottomLeft":
+      case "bottomleft":
         shapeRef.current.x(2);
         shapeRef.current.y(canvasHeight - shapeProps.height - 2);
         break;
-      case "bottomRight":
+      case "bottomright":
         shapeRef.current.x(canvasWidth - shapeProps.width - 2);
         shapeRef.current.y(canvasHeight - shapeProps.height - 2);
         break;
@@ -265,4 +263,4 @@ const Rectangle = ({
     </React.Fragment>
   );
 };
-export default Rectangle;
+export default RectangleEdit;

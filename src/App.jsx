@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Stage, Layer } from "react-konva";
-import Rectangle from "./features/annotationsEditor/components/Rectangle";
+import RectangleEdit from "./features/annotationsEditor/components/RectangleEdit";
 import "./App.css";
 import AnnotationsEditor from "./features/annotationsEditor/components/AnnotationsEditor";
-import Select from "./features/fieldsSelect/components/Select";
+import AnnotationsViewer from "./features/annotationsViewer/components/AnnotationsViewer";
 const initialRectangles = [
   {
     x: 10,
@@ -11,17 +10,24 @@ const initialRectangles = [
     width: 100,
     height: 100,
     fill: "transparent",
-    stroke: "red",
     id: "rect1",
+    confidence: 0.2,
+    fields: [
+      { name: "rect1 field1", confidence: 0.32323 },
+      { name: "rect1 field2", confidence: 0.3123123 },
+      { name: "rect1 field3", confidence: 0.35435 },
+      { name: "rect1 field4", confidence: 0.344 },
+    ],
   },
   {
     x: 150,
     y: 150,
-    width: 100,
+    width: 300,
     height: 100,
     fill: "transparent",
-    stroke: "green",
     id: "rect2",
+    confidence: 0.9,
+    fields: [{ name: "rect2 field1", confidence: 0.9 }],
   },
 ];
 
@@ -39,15 +45,16 @@ const App = () => {
 
   return (
     <>
-      {/* <Select
-        options={[
-          { label: "field one", value: "3", key: 1 },
-          { label: "field two", value: "4", key: 2 },
-        ]}
-        disabledOptions={[1]}
-        menuDirection={"up"}
-      /> */}
-      <AnnotationsEditor
+      <AnnotationsViewer
+        annotations={rectangles}
+        image={
+          "https://cdn.corporate.walmart.com/dims4/WMT/f7a8313/2147483647/strip/true/crop/1920x1080+0+0/resize/1200x675!/quality/90/?url=https%3A%2F%2Fcdn.corporate.walmart.com%2F7b%2F66%2F142c151b4cd3a19c13e1ca65f193%2Fbusinessfornature-banner.png"
+        }
+        width={1144}
+        height={643}
+        onAnnotationClick={(e) => console.log(e)}
+      />
+      {/* <AnnotationsEditor
         onChange={(newattr) => {
           console.log(newattr);
           setRectangles((rectangles) =>
@@ -71,9 +78,9 @@ const App = () => {
           { label: "field one", value: "3", key: 1 },
           { label: "field two", value: "4", key: 2 },
         ]}
-        disabledOptions={[1]}
+        disabledOptions={["field one"]}
         // highlightedAnnotations={rectangles.map((rect) => rect.id)}
-      />
+      /> */}
     </>
   );
 };

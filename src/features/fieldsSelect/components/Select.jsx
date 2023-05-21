@@ -90,7 +90,7 @@ const Select = ({
   const selectedTags = useMemo(() => {
     return selectedOptions.map((option) => (
       <OptionTag
-        key={option.key}
+        key={option.label}
         option={option}
         onDelete={() => handleOptionClick(option)}
       />
@@ -138,14 +138,14 @@ const Select = ({
                 searchText === "" ? true : option.label.includes(searchText)
               )
               .map((option) => {
-                const isDisabled = disabledOptions.includes(option.key);
+                const isDisabled = disabledOptions.includes(option.label);
                 const isSelected = !!selectedOptions?.find(
                   (o) => o.value === option.value
                 );
 
                 return (
                   <div
-                    key={option.key}
+                    key={option.label}
                     style={{
                       ...selectOptionStyle,
                       ...(isSelected ? selectOptionSelectedStyle : {}),

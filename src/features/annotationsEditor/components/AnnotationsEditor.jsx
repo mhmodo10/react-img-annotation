@@ -1,16 +1,16 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Stage, Layer, Image } from "react-konva";
-import Rectangle from "./Rectangle";
+import RectangleEdit from "./RectangleEdit";
 const transformerProps = {
   anchorFill: "green",
   borderStroke: "red",
 };
 
-const rectProps = {
+const rectStyle = {
   stroke: "red",
   fill: "transparent",
 };
-const higlightedRectProps = {
+const higlightedRectStyle = {
   stroke: "blue",
   fill: "transparent",
 };
@@ -20,12 +20,16 @@ const AnnotationsEditor = ({
   onAddAnnotation,
   onDeleteAnnotation,
   onFieldSelectChange,
+  onAnnotationSelected,
   options = [],
   boxFields = [], // this is an array of objects, each object has box id and options list
   highlightedAnnotations = [],
   image,
   width = 1000,
   height = 1000,
+  defaultAnnotationStyle = rectStyle,
+  highlightedAnnotationStyle = higlightedRectStyle,
+  transformerStyle = transformerProps,
 }) => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [_annotations, setAnnotations] = useState(annotations ?? []);
@@ -47,7 +51,7 @@ const AnnotationsEditor = ({
     if (selectedShape !== null) return;
     const { x, y } = e.target.getStage().getPointerPosition();
     const annotation = {
-      ...rectProps,
+      ...defaultAnnotationStyle,
       x,
       y,
       width: 100,
@@ -86,9 +90,7 @@ const AnnotationsEditor = ({
   const handleFieldSelectChange = (e) => {
     if (onFieldSelectChange) onFieldSelectChange(e);
   };
-  useEffect(() => {
-    console.log(_annotations);
-  }, [_annotations]);
+
   return (
     <Stage
       width={width}
@@ -96,9 +98,6 @@ const AnnotationsEditor = ({
       onMouseDown={checkDeselect}
       onTouchStart={checkDeselect}
       onDblClick={addNewAnnotation}
-      style={{
-        outline: "1px solid red",
-      }}
     >
       <Layer>
         <Image image={backgroundImage} ref={imageRef} />
@@ -115,28 +114,31 @@ const AnnotationsEditor = ({
             return [...acc, ...curr.fieldIds];
           }, []);
           const shapeProps = {
-            ...annotation,
             ...(highlightedAnnotations.includes(annotation.id)
-              ? higlightedRectProps
-              : rectProps),
+              ? highlightedAnnotationStyle
+              : defaultAnnotationStyle),
+            ...annotation,
           };
           return (
-            <Rectangle
+            <RectangleEdit
               key={shapeProps.id}
               shapeProps={shapeProps}
               isSelected={shapeProps.id === selectedShape?.id}
               onSelect={() => {
                 setSelectedShape(shapeProps);
+                if (onAnnotationSelected) {
+                  onAnnotationSelected(shapeProps);
+                }
               }}
               onChange={handleAnnotationChange}
               onDelete={handleDeleteAnnotation}
-              transformerProps={transformerProps}
+              transformerProps={transformerStyle}
               options={options}
               selectedOptions={selectedOptionsIds}
               disabledOptions={disabledOptionsIds}
               onFieldSelectChange={handleFieldSelectChange}
-              canvasWidth={backgroundImage.width}
-              canvasHeight={backgroundImage.height}
+              canvasWidth={width}
+              canvasHeight={height}
             />
           );
         })}
