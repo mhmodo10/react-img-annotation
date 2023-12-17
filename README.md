@@ -1,57 +1,192 @@
 # react-img-annotation
-this is a library the makes image annotations easy, you can add,delete,scale,rotate and label annotations.
-more features are coming soon!
-[![NPM](https://img.shields.io/npm/v/react-img-annotation.svg)](https://www.npmjs.com/package/react-img-annotation) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Install
+This is a package that helps with annotating data and viewing annotations.
 
-```bash
-npm install --save fabric
-npm install --save react-img-annotation
+It supports creating rectangles and attaching labels/fields to said rectangles.
+
+## NOTE:
+
+This package was previously implemented differently using fabricjs, now it has been migrated to konva. If you want to use the previous implementation you can use version `1.1.61`
+
+# Dependencies
+
+for this library you need konva, react-konva, react-konva-utils, react-icons
+
+which you can install using `npm install konva react-konva react-konva-utils react-icons`
+
+# Examples
+
+There are two main components in this package: `AnnotationsEditor` and `AnnotationsViewer`
+here is how to use `AnnotationsEditor`:
+
+```JSX
+import { useState } from "react";
+import { AnnotationsEditor } from "react-img-annotation";
+import "./App.css";
+const initialRectangles = [
+  {
+    x: 10,
+    y: 10,
+    width: 100,
+    height: 100,
+    fill: "transparent",
+    id: "rect1",
+  },
+  {
+    x: 150,
+    y: 150,
+    width: 300,
+    height: 100,
+    fill: "transparent",
+    id: "rect2",
+  },
+];
+
+const App = () => {
+  const [rectangles, setRectangles] = useState(initialRectangles);
+  const [selectedId, selectShape] = useState(null);
+
+  const checkDeselect = (e) => {
+    // deselect when clicked on empty area
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      selectShape(null);
+    }
+  };
+
+  return (
+    <>
+      <AnnotationsEditor
+        // initial annotations
+        annotations={[]}
+        onChange={(newattr) => {
+          setRectangles((rectangles) =>
+            rectangles.map((rect) => {
+              if (rect.id === newattr.id) {
+                return { ...rect, ...newattr };
+              }
+              return rect;
+            })
+          );
+        }}
+        onAddAnnotation={(annotation) => {
+          setRectangles((rectangles) => [...rectangles, annotation]);
+        }}
+        onDeleteAnnotation={(deletedId) => {
+          console.log(deletedId);
+        }}
+        onFieldSelectChange={(change) => {
+          console.log(change);
+        }}
+        onAnnotationSelected={(shapeProps) => {
+          console.log(shapeProps);
+        }}
+        options={[
+          { label: "field one", value: "3" },
+          { label: "field two", value: "4" },
+        ]}
+        image={"url/to/image"}
+        width={1144}
+        height={643}
+        disabledOptions={["field one"]}
+        highlightedAnnotations={[]}
+        // default rect styling, check konva rect for all props
+        defaultAnnotationStyle={{
+          stroke: "red",
+          fill: "transparent",
+        }}
+        // higlighted rect styling, check konva rect for all props
+        highlightedAnnotationStyle={{
+          stroke: "blue",
+          fill: "transparent",
+        }}
+        // transformer styling, check konva transformer for all props
+        transformerStyle={{ anchorFill: "green", borderStroke: "red" }}
+        showLabels={true} // shows labels on top of the rectangles
+        rectLabelPositionFunc={(selectedOptions, currentPos) => {
+          // control position of labels (default is on top)
+          return {
+            top: 25,
+            left: 25,
+          };
+        }}
+      />
+    </>
+  );
+};
+
+export default App;
 ```
 
-## Usage
-this is how you use the AnnotationsCanvas component
-```jsx
-imageSrc = "string with the url or image path"
+Here is how to use `AnnotationsViewer`:
 
-//annotationsData is a list of boxes each box has the following structure
-{
-  key : key, //unique
-  label : string, //label given to the box
-  x : int, //x-coordinates with (0,0) being top left
-  y : int, //y-coordinates with (0,0) being top left
-  w : int, //box width
-  h : int, //box height
-}
-//all the boxes in annotationsData get drawn
+```JSX
+import { useState } from "react";
+import "./App.css";
+import { AnnotationsViewer } from "react-img-annotation";
+const initialRectangles = [
+  {
+    x: 10,
+    y: 10,
+    width: 100,
+    height: 100,
+    fill: "transparent",
+    id: "rect1",
+    confidence: 0.2,
+    fields: [
+      { name: "rect1 field1", confidence: 0.32323 },
+      { name: "rect1 field2", confidence: 0.3123123 },
+      { name: "rect1 field3", confidence: 0.35435 },
+      { name: "rect1 field4", confidence: 0.344 },
+    ],
+  },
+  {
+    x: 150,
+    y: 150,
+    width: 300,
+    height: 100,
+    fill: "transparent",
+    id: "rect2",
+    confidence: 0.9,
+    fields: [{ name: "rect2 field1", confidence: 0.9 }],
+  },
+];
 
-//OnAnnotationsChange is called when there is any change to the boxes on the canvas (i.e change location, scale,rotation)
-//and gives the changed annotations as input
+const App = () => {
+  const [rectangles, setRectangles] = useState(initialRectangles);
 
-//modifiedLabel is optional and given when you want to edit a certain label in from outside AnnotationCanvas and has the following structure
-{
-key : value, //key of the edited annotation
-label: new_label
-}
+  return (
+    <>
+      <AnnotationsViewer
+        annotations={rectangles}
+        image={"url/to/image"}
+        width={1144}
+        height={643}
+        onAnnotationClick={(annotation) => console.log(annotation)}
+      />
+    </>
+  );
+};
 
-//isSelectable is a boolean that dictates if interaction with annotations is allowed
-
-//OnAnnotationsSelect gets called when an annotation is selected and gives the selected annotation as input
+export default App;
 ```
-```jsx
-import {AnnotationCanvas} from 'react-img-annotation'
-<AnnotationCanvas
-image={imageSrc}
-annotationsData={annotationsData}
-OnAnnotationsChange={(annotations) => {OnAnnotationsChange(annotations)}}
-w={widthNumber}
-h={heightNumber}
-modifiedLabel={modifiedLabel}
-isSelectable={isSelectable}
-OnAnnotationSelect={(annotation) =>{OnAnnotationSelect(annotation)}}>
-</AnnotationCanvas>
-```
+
+# Style customization:
+
+Many parts of the package are customizable through classNames:
+
+| className                       | description                                                | notes                                |
+| ------------------------------- | ---------------------------------------------------------- | ------------------------------------ |
+| rect-edit-labels-container      | controls styling for labels container in editor rectangles | do not change position, top or left. |
+| rect-edit-label                 | controls styling for labels                                |                                      |
+| rect-edit-menu-button           | menu button styling                                        |                                      |
+| rect-edit-delete-button         | delete button styling                                      |                                      |
+| rect-view-label                 | label styling in viewer rectangles                         |                                      |
+| fields-select-placeholder       | styling for fields select placehlder                       |                                      |
+| fields-select-placeholder-input | styling for select input                                   |                                      |
+| fields-select-dropdown          | styling for select dropdown                                |                                      |
+| fields-select-no-options        | styling for when there are no options                      |                                      |
+| fields-select-option            | styling for a single option                                |                                      |
 
 ## License
 
