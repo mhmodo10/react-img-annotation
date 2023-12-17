@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { FiCheck } from "react-icons/fi";
+import { useMemo, useState } from "react";
 import { FaExclamationCircle } from "react-icons/fa";
+import { FiCheck } from "react-icons/fi";
 import OptionTag from "./OptionTag";
 
 const Select = ({
@@ -11,8 +11,7 @@ const Select = ({
   disabledOptions = [],
   selectedOptions = [],
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  // console.log("selectedoptions", selectedOptions);
+  const [isOpen, setIsOpen] = useState(true);
   const [searchText, setSearchText] = useState("");
   const handleOptionClick = (option) => {
     console.log("clicked");
@@ -95,11 +94,12 @@ const Select = ({
         onDelete={() => handleOptionClick(option)}
       />
     ));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOptions]);
   return (
     <div style={selectContainerStyle}>
       <div
+        className='fields-select-placeholder'
         style={selectPlaceholderStyle}
         onClick={() => setIsOpen(true)}
         role='button'
@@ -107,6 +107,7 @@ const Select = ({
       >
         {selectedTags}
         <input
+          className='fields-select-placeholder-input'
           type='text'
           placeholder={
             selectedTags.length === 0 ? placeholder : "Search for field"
@@ -124,9 +125,12 @@ const Select = ({
         />
       </div>
       {isOpen && (
-        <div style={selectDropdownStyle}>
+        <div className='fields-select-dropdown' style={selectDropdownStyle}>
           {options.length === 0 ? (
-            <div style={selectNoOptionsStyle}>
+            <div
+              className='fields-select-no-options'
+              style={selectNoOptionsStyle}
+            >
               <div>
                 <FaExclamationCircle style={{ marginRight: "8px" }} />
                 No options available.
@@ -145,6 +149,7 @@ const Select = ({
 
                 return (
                   <div
+                    className='fields-select-option'
                     key={option.label}
                     style={{
                       ...selectOptionStyle,

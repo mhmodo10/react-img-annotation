@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { RiDeleteBin6Line, RiMenuFill } from "react-icons/ri";
 import { Rect, Transformer } from "react-konva";
 import { Html } from "react-konva-utils";
-import { RiDeleteBin6Line, RiMenuFill } from "react-icons/ri";
 import Select from "../../fieldsSelect/components/Select";
 const RectangleEdit = ({
   shapeProps,
@@ -16,6 +16,8 @@ const RectangleEdit = ({
   disabledOptions = [],
   canvasWidth,
   canvasHeight,
+  showLabels = true,
+  labelPositionFunc,
 }) => {
   const shapeRef = useRef();
   const trRef = useRef();
@@ -180,6 +182,49 @@ const RectangleEdit = ({
           onChange(annotation);
         }}
       />
+      {showLabels && (
+        <Html>
+          <div
+            className='rect-edit-labels-container'
+            style={{
+              position: "absolute",
+              ...labelPositionFunc(_selectedOptions, currentPos),
+              display: "flex",
+              flexDirection: "column-reverse",
+              flexWrap: "wrap",
+              gap: 5,
+              width: shapeProps.width,
+            }}
+          >
+            {_selectedOptions.map((option) => {
+              console.log(option);
+              return (
+                <div
+                  className={"rect-edit-label"}
+                  key={option.label}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#f5f5f5",
+                    color: "black",
+                    padding: "1px 2px",
+                    borderRadius: 6,
+                    textAlign: "center",
+                    width: "max-content",
+                    minWidth: shapeProps.width,
+                    maxHeight: 20,
+                    fontSize: 15,
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {option?.label}
+                </div>
+              );
+            })}
+          </div>
+        </Html>
+      )}
       {isSelected && showInteractions && (
         <Html divProps={{ onBlur: () => setShowFieldsMenu(false) }}>
           {showFieldsMenu && (
@@ -217,6 +262,7 @@ const RectangleEdit = ({
             }}
           >
             <button
+              className='rect-edit-menu-button'
               style={{
                 width: 30,
                 height: 30,
@@ -231,6 +277,7 @@ const RectangleEdit = ({
               <RiMenuFill />
             </button>
             <button
+              className='rect-edit-delete-button'
               onClick={handleDelete}
               style={{
                 width: 30,

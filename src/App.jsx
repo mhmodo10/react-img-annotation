@@ -1,5 +1,4 @@
 import { useState } from "react";
-import RectangleEdit from "./features/annotationsEditor/components/RectangleEdit";
 import "./App.css";
 import AnnotationsEditor from "./features/annotationsEditor/components/AnnotationsEditor";
 import AnnotationsViewer from "./features/annotationsViewer/components/AnnotationsViewer";
@@ -33,15 +32,6 @@ const initialRectangles = [
 
 const App = () => {
   const [rectangles, setRectangles] = useState(initialRectangles);
-  const [selectedId, selectShape] = useState(null);
-
-  const checkDeselect = (e) => {
-    // deselect when clicked on empty area
-    const clickedOnEmpty = e.target === e.target.getStage();
-    if (clickedOnEmpty) {
-      selectShape(null);
-    }
-  };
 
   return (
     <>
@@ -54,7 +44,7 @@ const App = () => {
         height={643}
         onAnnotationClick={(e) => console.log(e)}
       />
-      {/* <AnnotationsEditor
+      <AnnotationsEditor
         onChange={(newattr) => {
           console.log(newattr);
           setRectangles((rectangles) =>
@@ -80,7 +70,7 @@ const App = () => {
         ]}
         disabledOptions={["field one"]}
         // highlightedAnnotations={rectangles.map((rect) => rect.id)}
-      /> */}
+      />
     </>
   );
 };

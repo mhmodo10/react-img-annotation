@@ -39,6 +39,7 @@ const RectangleView = ({
           {fields.map((field) => {
             return (
               <div
+                className='rect-view-label'
                 key={field.name}
                 style={{
                   display: "flex",

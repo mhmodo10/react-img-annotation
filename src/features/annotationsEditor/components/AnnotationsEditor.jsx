@@ -1,5 +1,5 @@
-import { useState, useRef, useMemo } from "react";
-import { Stage, Layer, Image } from "react-konva";
+import { useMemo, useRef, useState } from "react";
+import { Image, Layer, Stage } from "react-konva";
 import RectangleEdit from "./RectangleEdit";
 const transformerProps = {
   anchorFill: "green",
@@ -30,6 +30,13 @@ const AnnotationsEditor = ({
   defaultAnnotationStyle = rectStyle,
   highlightedAnnotationStyle = higlightedRectStyle,
   transformerStyle = transformerProps,
+  showLabels = true,
+  rectLabelPositionFunc = (selectedOptions, currentPosition) => {
+    return {
+      top: currentPosition.y - selectedOptions.length * 27,
+      left: currentPosition.x,
+    };
+  },
 }) => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [_annotations, setAnnotations] = useState(annotations ?? []);
@@ -139,6 +146,8 @@ const AnnotationsEditor = ({
               onFieldSelectChange={handleFieldSelectChange}
               canvasWidth={width}
               canvasHeight={height}
+              showLabels={showLabels}
+              labelPositionFunc={rectLabelPositionFunc}
             />
           );
         })}
